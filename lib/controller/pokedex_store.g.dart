@@ -99,12 +99,12 @@ mixin _$PokedexStore on _PokedexStore, Store {
     return _$_fetchAsyncAction.run(() => super._fetch());
   }
 
-  late final _$refreshAsyncAction =
-      AsyncAction('_PokedexStore.refresh', context: context);
+  late final _$_refreshAsyncAction =
+      AsyncAction('_PokedexStore._refresh', context: context);
 
   @override
-  Future<void> refresh() {
-    return _$refreshAsyncAction.run(() => super.refresh());
+  Future<void> _refresh() {
+    return _$_refreshAsyncAction.run(() => super._refresh());
   }
 
   @override

@@ -4,10 +4,13 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobx/mobx.dart';
 import 'package:poke_app/assets/pokemon_icons.dart';
+import 'package:poke_app/controller/filter_store.dart';
 import 'package:poke_app/controller/pokedex_store.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon_shallow.dart';
 import 'package:poke_app/presentation/widget/error_header.dart';
+import 'package:poke_app/presentation/widget/filter_bar.dart';
 import 'package:poke_app/utils/constraints.dart';
 import 'package:poke_app/utils/string_extensions.dart';
 import 'package:provider/provider.dart';
@@ -38,30 +41,49 @@ class PokemonHome extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final controller = useScrollController(keys: const []);
-    final pokemonNotifier = context.watch<PokedexStore>();
-    _usePagination(paging: pokemonNotifier, controller: controller);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pokedex'),
-        centerTitle: true,
-        elevation: 0.0,
-      ),
-      body: Scrollbar(
-        controller: controller,
-        child: _PokemonListView(scrollController: controller),
-      ),
-      floatingActionButton: Observer(
-        builder: (_) {
-          return pokemonNotifier.pokemons.isEmpty 
-            ? const SizedBox()
-            : FloatingActionButton(
-              onPressed: () => controller.animateTo(
-                0,
-                duration: const Duration(milliseconds: 700),
-                curve: Curves.easeInOutCubicEmphasized,
-              ),
-              child: const Icon(Icons.arrow_upward_outlined),
-            );
+    final pokemonStore = context.watch<PokedexStore>();
+    final filterStore = context.watch<FilterStore>();
+    _usePagination(paging: pokemonStore, controller: controller);
+    return ReactionBuilder(
+      builder: (context) {
+        final pokemonStore = context.read<PokedexStore>();
+        final filterStore = context.read<FilterStore>();
+        return reaction(
+          (_) => filterStore.selectedFilter,
+          pokemonStore.changeFilter,
+        );
+      },
+      child: Observer(
+        builder: (context) {
+          final hideFAB = pokemonStore.pokemons.isEmpty;
+          final hideFilters = filterStore.filters == null;
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Pokedex'),
+              centerTitle: true,
+              elevation: 0.0,
+              bottom: hideFilters
+                  ? null
+                  : const PreferredSize(
+                      preferredSize: Size.fromHeight(kToolbarHeight),
+                      child: FilterBar(),
+                    ),
+            ),
+            body: Scrollbar(
+              controller: controller,
+              child: _PokemonListView(scrollController: controller),
+            ),
+            floatingActionButton: hideFAB
+                ? null
+                : FloatingActionButton(
+                    onPressed: () => controller.animateTo(
+                      0,
+                      duration: const Duration(milliseconds: 700),
+                      curve: Curves.easeInOutCubicEmphasized,
+                    ),
+                    child: const Icon(Icons.arrow_upward_outlined),
+                  ),
+          );
         },
       ),
     );

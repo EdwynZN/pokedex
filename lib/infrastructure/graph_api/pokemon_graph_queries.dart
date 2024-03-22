@@ -1,3 +1,61 @@
+String pokemonsQueryWithFilters({
+  required bool filterTypes,
+  required bool filterColors,
+}) {
+  final String whereType = filterTypes
+      ? ''',
+      pokemon_v2_pokemons: {
+        pokemon_v2_pokemontypes: {
+          type_id: {_in: \$types}
+        }
+      }
+  '''
+      : '';
+  final String whereColors = filterColors
+      ? ''',
+        _and: {
+          pokemon_v2_pokemoncolor: {
+            id: {
+              _in: \$colors
+            }
+          }
+        }
+  '''
+      : '';
+
+  return '''
+    query pokemonsQuery(
+      \$offset: Int! = 0,
+      \$limit: Int! = 60,
+      \$generations: [Int!]=[1,2]
+      ${filterTypes ? ',\$types: [Int!]!' : ''}
+      ${filterColors ? ',\$colors: [Int!]!' : ''}
+    ) {
+    pokemons: pokemon_v2_pokemonspecies(
+      limit: \$limit,
+      offset: \$offset,
+      where: {
+        pokemon_v2_generation: {
+          id: {
+            _in: \$generations
+          }
+        }$whereType$whereColors
+      },
+      order_by: {id: asc}
+    ) {
+      name
+      id
+      color: pokemon_v2_pokemoncolor {
+        name
+      }
+      generation: pokemon_v2_generation {
+        name
+      }
+    }
+  }
+  ''';
+}
+
 const pokemonsQuery = r'''
 query pokemonsQuery($offset: Int! = 0, $limit: Int! = 60) {
   pokemons: pokemon_v2_pokemonspecies(
@@ -5,8 +63,8 @@ query pokemonsQuery($offset: Int! = 0, $limit: Int! = 60) {
     offset: $offset,
     where: {
       pokemon_v2_generation: {
-        name: {
-          _in: ["generation-i", "generation-ii"]
+        id: {
+          _in: [1, 2]
         }
       }
     },

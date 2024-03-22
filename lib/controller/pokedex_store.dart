@@ -1,4 +1,5 @@
 import 'package:mobx/mobx.dart';
+import 'package:poke_app/domain/pokemon/model/pokemon_filter.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon_shallow.dart';
 import 'package:poke_app/domain/pokemon/repository.dart';
 
@@ -11,7 +12,7 @@ abstract class _PokedexStore with Store {
   final PokemonRepository _repository;
   late ReactionDisposer _disposer;
 
-  _PokedexStore(this._repository) {
+  _PokedexStore(this._repository) : _filter = const PokemonFilter() {
     _disposer = when(
       (_) => !_isLoading && !hasError && pokemons.length < _pageSize,
       () {
@@ -21,7 +22,10 @@ abstract class _PokedexStore with Store {
     _fetch();
   }
 
-  final ObservableList<PokemonShallow> _pokemons = ObservableList<PokemonShallow>();
+  PokemonFilter _filter;
+
+  final ObservableList<PokemonShallow> _pokemons =
+      ObservableList<PokemonShallow>();
 
   @readonly
   bool _isLoading = true;
@@ -47,13 +51,15 @@ abstract class _PokedexStore with Store {
       return;
     }
     _isLoading = true;
+    _error = null;
     await _fetch();
   }
 
-  Future<List<PokemonShallow>> __fetchPage(int? offset) async {
+  Future<List<PokemonShallow>> __fetchPage(int offset) async {
     final fetch = await _repository.getPage(
-      offset: offset ?? 0,
+      offset: offset,
       limit: _pageSize,
+      filter: _filter,
     );
     return fetch.fold((l) => throw l, (r) => r);
   }
@@ -70,10 +76,20 @@ abstract class _PokedexStore with Store {
     }
   }
 
-  @action
   Future<void> refresh() async {
     if (_isLoading) return;
+    _refresh();
+  }
+
+  Future<void> changeFilter(PokemonFilter filter) async {
+    _filter = filter;
+    _refresh();
+  }
+
+  @action
+  Future<void> _refresh() async {
     _isLoading = true;
+    _error = null;
     try {
       final result = await __fetchPage(0);
       pokemons

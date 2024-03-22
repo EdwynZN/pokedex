@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:poke_app/domain/failure.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon.dart';
+import 'package:poke_app/domain/pokemon/model/pokemon_filter.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon_shallow.dart';
 import 'package:poke_app/domain/pokemon/repository.dart';
 import 'package:poke_app/infrastructure/poke_api/pokeapi.dart';
@@ -32,12 +33,13 @@ final class PokemonRemoteRepository implements PokemonRepository {
       return Left(UnknownFailure(error: e));
     }
   }
-
+  
   @override
   Future<Either<DomainFailure, List<PokemonShallow>>> getPage({
     int offset = 0,
     int limit = 60,
-  }) async {
+    PokemonFilter filter = const PokemonFilter(),
+  })  async {
     try {
       final response = await api.getPokemons({
         'offset': offset,
