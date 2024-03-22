@@ -45,6 +45,7 @@ class PokeGraphResponse with _$PokeGraphResponse {
         height: details.height,
         weight: details.weight,
         baseExperience: details.baseExperience,
+        color: color.value,
         image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/$id.svg',
         sprite: Sprite(
           front: details.sprites.front,

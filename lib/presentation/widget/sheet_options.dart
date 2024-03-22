@@ -16,6 +16,7 @@ Future<Result<Set<E>>?> showOptionsSheet<E>({
     isDismissible: true,
     elevation: 4.0,
     enableDrag: true,
+    useSafeArea: true,
     showDragHandle: true,
     builder: (context) {
       final Size size = MediaQuery.sizeOf(context);
@@ -61,75 +62,73 @@ class FilteredOptions<E> extends HookWidget {
       theme.colorScheme.primary,
       8.0,
     );
-    return SafeArea(
-      child: CustomScrollView(
-        controller: scrollController,
-        slivers: <Widget>[
-          SliverAppBar(
-            backgroundColor: theme.bottomSheetTheme.backgroundColor,
-            elevation: 12,
-            forceElevated: true,
-            pinned: true,
-            centerTitle: false,
-            actions: [
-              TextButton(
-                child: const Text('Save'),
-                onPressed: () {
-                  Navigator.pop(
-                    context,
-                    Result(
-                      result: state.value
-                      .where((element) => element.isSelected)
-                      .map((e) => e.data)
-                      .toSet(),
-                    ),
-                  );
-                },
-              ),
-              TextButton(
-                child: const Text('Clear'),
-                onPressed: () {
-                  Navigator.pop(context, Result<Set<E>>(result: const {}));
-                },
-              ),
-            ],
-            title: Text(
-              title,
-              style: TextStyle(
-                color: theme.colorScheme.onPrimaryContainer,
-              ),
-            ),
-            automaticallyImplyLeading: false,
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final filter = state.value[index];
-                final isSelected = filter.isSelected;
-                return ListTile(
-                  selectedTileColor: tileColor,
-                  selected: isSelected,
-                  title: Text(
-                    filter.label.toTitleCase(),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+    return CustomScrollView(
+      controller: scrollController,
+      slivers: <Widget>[
+        SliverAppBar(
+          backgroundColor: theme.bottomSheetTheme.backgroundColor,
+          elevation: 12,
+          forceElevated: true,
+          pinned: true,
+          centerTitle: false,
+          actions: [
+            TextButton(
+              child: const Text('Save'),
+              onPressed: () {
+                Navigator.pop(
+                  context,
+                  Result(
+                    result: state.value
+                    .where((element) => element.isSelected)
+                    .map((e) => e.data)
+                    .toSet(),
                   ),
-                  onTap: () {
-                    final newList = [...state.value];
-                    newList[index] = filter.copyWith(isSelected: !isSelected);
-                    state.value = newList;
-                  },
                 );
               },
-              childCount: state.value.length,
+            ),
+            TextButton(
+              child: const Text('Clear'),
+              onPressed: () {
+                Navigator.pop(context, Result<Set<E>>(result: const {}));
+              },
+            ),
+          ],
+          title: Text(
+            title,
+            style: TextStyle(
+              color: theme.colorScheme.onPrimaryContainer,
             ),
           ),
-        ],
-      ),
+          automaticallyImplyLeading: false,
+        ),
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              final filter = state.value[index];
+              final isSelected = filter.isSelected;
+              return ListTile(
+                selectedTileColor: tileColor,
+                selected: isSelected,
+                title: Text(
+                  filter.label.toTitleCase(),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                onTap: () {
+                  final newList = [...state.value];
+                  newList[index] = filter.copyWith(isSelected: !isSelected);
+                  state.value = newList;
+                },
+              );
+            },
+            childCount: state.value.length,
+          ),
+        ),
+      ],
     );
   }
 }

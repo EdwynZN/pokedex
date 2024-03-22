@@ -27,6 +27,7 @@ mixin _$Pokemon {
   int get baseExperience => throw _privateConstructorUsedError;
   String get image => throw _privateConstructorUsedError;
   Sprite get sprite => throw _privateConstructorUsedError;
+  String get color => throw _privateConstructorUsedError;
   Sprite? get femaleSprite => throw _privateConstructorUsedError;
   Sprite? get shinySprite => throw _privateConstructorUsedError;
   Sprite? get shinyFemaleSprite => throw _privateConstructorUsedError;
@@ -53,6 +54,7 @@ abstract class $PokemonCopyWith<$Res> {
       int baseExperience,
       String image,
       Sprite sprite,
+      String color,
       Sprite? femaleSprite,
       Sprite? shinySprite,
       Sprite? shinyFemaleSprite,
@@ -87,6 +89,7 @@ class _$PokemonCopyWithImpl<$Res, $Val extends Pokemon>
     Object? baseExperience = null,
     Object? image = null,
     Object? sprite = null,
+    Object? color = null,
     Object? femaleSprite = freezed,
     Object? shinySprite = freezed,
     Object? shinyFemaleSprite = freezed,
@@ -124,6 +127,10 @@ class _$PokemonCopyWithImpl<$Res, $Val extends Pokemon>
           ? _value.sprite
           : sprite // ignore: cast_nullable_to_non_nullable
               as Sprite,
+      color: null == color
+          ? _value.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as String,
       femaleSprite: freezed == femaleSprite
           ? _value.femaleSprite
           : femaleSprite // ignore: cast_nullable_to_non_nullable
@@ -215,6 +222,7 @@ abstract class _$$PokemonImplCopyWith<$Res> implements $PokemonCopyWith<$Res> {
       int baseExperience,
       String image,
       Sprite sprite,
+      String color,
       Sprite? femaleSprite,
       Sprite? shinySprite,
       Sprite? shinyFemaleSprite,
@@ -251,6 +259,7 @@ class __$$PokemonImplCopyWithImpl<$Res>
     Object? baseExperience = null,
     Object? image = null,
     Object? sprite = null,
+    Object? color = null,
     Object? femaleSprite = freezed,
     Object? shinySprite = freezed,
     Object? shinyFemaleSprite = freezed,
@@ -288,6 +297,10 @@ class __$$PokemonImplCopyWithImpl<$Res>
           ? _value.sprite
           : sprite // ignore: cast_nullable_to_non_nullable
               as Sprite,
+      color: null == color
+          ? _value.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as String,
       femaleSprite: freezed == femaleSprite
           ? _value.femaleSprite
           : femaleSprite // ignore: cast_nullable_to_non_nullable
@@ -331,6 +344,7 @@ class _$PokemonImpl implements _Pokemon {
       required this.baseExperience,
       required this.image,
       required this.sprite,
+      required this.color,
       this.femaleSprite,
       this.shinySprite,
       this.shinyFemaleSprite,
@@ -360,6 +374,8 @@ class _$PokemonImpl implements _Pokemon {
   final String image;
   @override
   final Sprite sprite;
+  @override
+  final String color;
   @override
   final Sprite? femaleSprite;
   @override
@@ -404,7 +420,7 @@ class _$PokemonImpl implements _Pokemon {
 
   @override
   String toString() {
-    return 'Pokemon(id: $id, name: $name, height: $height, weight: $weight, baseExperience: $baseExperience, image: $image, sprite: $sprite, femaleSprite: $femaleSprite, shinySprite: $shinySprite, shinyFemaleSprite: $shinyFemaleSprite, abilities: $abilities, movements: $movements, stats: $stats, types: $types)';
+    return 'Pokemon(id: $id, name: $name, height: $height, weight: $weight, baseExperience: $baseExperience, image: $image, sprite: $sprite, color: $color, femaleSprite: $femaleSprite, shinySprite: $shinySprite, shinyFemaleSprite: $shinyFemaleSprite, abilities: $abilities, movements: $movements, stats: $stats, types: $types)';
   }
 
   @override
@@ -420,6 +436,7 @@ class _$PokemonImpl implements _Pokemon {
                 other.baseExperience == baseExperience) &&
             (identical(other.image, image) || other.image == image) &&
             (identical(other.sprite, sprite) || other.sprite == sprite) &&
+            (identical(other.color, color) || other.color == color) &&
             (identical(other.femaleSprite, femaleSprite) ||
                 other.femaleSprite == femaleSprite) &&
             (identical(other.shinySprite, shinySprite) ||
@@ -445,6 +462,7 @@ class _$PokemonImpl implements _Pokemon {
       baseExperience,
       image,
       sprite,
+      color,
       femaleSprite,
       shinySprite,
       shinyFemaleSprite,
@@ -476,6 +494,7 @@ abstract class _Pokemon implements Pokemon {
       required final int baseExperience,
       required final String image,
       required final Sprite sprite,
+      required final String color,
       final Sprite? femaleSprite,
       final Sprite? shinySprite,
       final Sprite? shinyFemaleSprite,
@@ -500,6 +519,8 @@ abstract class _Pokemon implements Pokemon {
   String get image;
   @override
   Sprite get sprite;
+  @override
+  String get color;
   @override
   Sprite? get femaleSprite;
   @override

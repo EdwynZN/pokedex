@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobx/mobx.dart';
 import 'package:poke_app/assets/pokemon_icons.dart';
 import 'package:poke_app/controller/pokemon_details_store.dart';
 import 'package:poke_app/domain/failure.dart';
@@ -15,6 +16,7 @@ import 'package:poke_app/presentation/widget/page_indicator.dart';
 import 'package:poke_app/presentation/widget/type_chip.dart';
 import 'package:poke_app/utils/constraints.dart';
 import 'package:poke_app/utils/string_extensions.dart';
+import 'package:poke_app/utils/theme.dart';
 import 'package:provider/provider.dart';
 
 class PokemonDetailsScreen extends HookWidget {
@@ -23,6 +25,7 @@ class PokemonDetailsScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final scrollController = useScrollController(keys: const []);
+    final ValueNotifier<ThemeFlex?> themeState = useState<ThemeFlex?>(null);
     final showFABState = useState(false);
     useEffect(() {
       void listenScroll() {
@@ -38,7 +41,7 @@ class PokemonDetailsScreen extends HookWidget {
       return () => scrollController.removeListener(listenScroll);
     }, [scrollController, showFABState]);
 
-    return Scaffold(
+    Widget child = Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Observer(
@@ -132,6 +135,33 @@ class PokemonDetailsScreen extends HookWidget {
               child: const Icon(Icons.arrow_upward_outlined),
             )
           : null,
+    );
+
+    final theme = themeState.value;
+    if (theme != null) {
+      child = Theme(
+        data: Theme.of(context).brightness == Brightness.light
+          ? theme.light
+          : theme.dark,
+        child: child,
+      );
+    }
+
+    return ReactionBuilder(
+      key: const ValueKey('ThemeReaction'),
+      builder: (context) {
+        final detailStore = context.read<PokemonDetailStore>();
+        return reaction(
+          (_) {
+            final color = detailStore.data?.color;
+            return color != null && color.isNotEmpty ? color : '';
+          },
+          (color) {
+            themeState.value = ThemeFlex.fromString(color);
+          },
+        );
+      },
+      child: child,
     );
   }
 }

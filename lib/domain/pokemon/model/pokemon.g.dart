@@ -15,6 +15,7 @@ _$PokemonImpl _$$PokemonImplFromJson(Map<String, dynamic> json) =>
       baseExperience: json['baseExperience'] as int,
       image: json['image'] as String,
       sprite: Sprite.fromJson(json['sprite'] as Map<String, dynamic>),
+      color: json['color'] as String,
       femaleSprite: json['femaleSprite'] == null
           ? null
           : Sprite.fromJson(json['femaleSprite'] as Map<String, dynamic>),
@@ -51,6 +52,7 @@ Map<String, dynamic> _$$PokemonImplToJson(_$PokemonImpl instance) {
     'baseExperience': instance.baseExperience,
     'image': instance.image,
     'sprite': instance.sprite.toJson(),
+    'color': instance.color,
   };
 
   void writeNotNull(String key, dynamic value) {

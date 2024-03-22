@@ -4,10 +4,22 @@ import 'package:flutter/material.dart';
 
 class ThemeFlex {
   ThemeFlex([this.scheme = FlexScheme.dellGenoa]);
-/* 
-  factory ThemeFlex.fromColor(MaterialColor color) {
-    return ThemeFlex(FlexScheme.amber);
-  } */
+
+  factory ThemeFlex.fromString(String color) {
+    if (color.isEmpty) {
+      return ThemeFlex();
+    }
+    final names = FlexScheme.values.map((f) => f.name).toList();
+    int index = names.indexWhere((element) => element.toLowerCase().contains(color.toLowerCase()));
+    if (index == -1) {
+      index = names.indexWhere((element) => element[0] == color[0]);
+    }
+    if (index == -1) {
+      return ThemeFlex();
+    }
+
+    return ThemeFlex(FlexScheme.values[index]);
+  }
 
   final FlexScheme scheme;
 

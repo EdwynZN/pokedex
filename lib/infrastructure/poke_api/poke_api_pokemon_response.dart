@@ -53,6 +53,7 @@ class PokeApiPokemonResponse with _$PokeApiPokemonResponse {
         height: height,
         weight: weight,
         baseExperience: baseExperience,
+        color: '',
         image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/$id.svg',
         sprite: Sprite(
           back: sprites.back,

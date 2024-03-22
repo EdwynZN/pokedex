@@ -14,6 +14,7 @@ class Pokemon with _$Pokemon {
     required final int baseExperience,
     required final String image,
     required final Sprite sprite,
+    required final String color,
     final Sprite? femaleSprite,
     final Sprite? shinySprite,
     final Sprite? shinyFemaleSprite,

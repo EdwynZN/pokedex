@@ -238,7 +238,11 @@ class _PokemonTile extends StatelessWidget {
         ),
         subtitle: Text(
           '#${pokemon.id}',
-          style: const TextStyle(fontSize: 12.0, color: Color(0xFF666666)),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12.0,
+            color: scheme.outline,
+          ),
         ),
         onTap: () => context.pushNamed(
           'pokemon_details',
