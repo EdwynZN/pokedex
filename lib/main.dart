@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -13,6 +16,7 @@ import 'package:poke_app/domain/pokemon/filter_repository.dart';
 import 'package:poke_app/domain/pokemon/implementation/filter_graph_repository.dart';
 import 'package:poke_app/domain/pokemon/implementation/pokemon_graph_repository.dart';
 import 'package:poke_app/domain/pokemon/repository.dart';
+import 'package:poke_app/firebase_options.dart';
 import 'package:poke_app/infrastructure/graph_api/poke_graph_api.dart';
 import 'package:poke_app/presentation/routes/router.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +24,28 @@ import 'package:provider/provider.dart';
 void main() {
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
+
+    /// Firebase initialization
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    /// When not in debug mode:
+    ///
+    /// - Report crash to FirebaseCrashlytics
+    ///
+    /// - Change ErrorWidget to show a grey Container
+    if (!kDebugMode) {
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+      FlutterError.onError = (details) {
+        FlutterError.presentError(details);
+        unawaited(FirebaseCrashlytics.instance.recordFlutterError(details));
+      };
+      ErrorWidget.builder = (_) => Container(color: Colors.grey.shade300);
+    } else {
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+    }
+
     SystemChrome.setPreferredOrientations(const [DeviceOrientation.portraitUp]);
     runApp(MultiProvider(
       providers: [
@@ -77,8 +103,12 @@ void main() {
       child: const PokedexApp(),
     ));
   }, (error, stackTrace) {
+    if (kDebugMode) {
+      debugPrintStack(stackTrace: stackTrace, label: error.toString());
+      return;
+    }
+    unawaited(FirebaseCrashlytics.instance.recordError(error, stackTrace));
   });
-
 }
 
 class PokedexApp extends StatelessObserverWidget {
