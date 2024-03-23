@@ -266,18 +266,22 @@ class _DetailPokemonCard extends StatelessWidget {
                 ),
               );
             },
-            child: SvgPicture.network(
-              image,
-              semanticsLabel: name,
-              height: 140.0,
-              width: 120.0,
-              allowDrawingOutsideViewBox: false,
-              fit: BoxFit.contain,
-              alignment: Alignment.center,
-              placeholderBuilder: (BuildContext context) => const Image(
-                image: AssetImage(PokemonIcons.pokeball),
+            child: Hero(
+              transitionOnUserGestures: true,
+              tag: id,
+              child: SvgPicture.network(
+                image,
+                semanticsLabel: name,
                 height: 140.0,
                 width: 120.0,
+                allowDrawingOutsideViewBox: false,
+                fit: BoxFit.contain,
+                alignment: Alignment.center,
+                placeholderBuilder: (BuildContext context) => const Image(
+                  image: AssetImage(PokemonIcons.pokeball),
+                  height: 140.0,
+                  width: 120.0,
+                ),
               ),
             ),
           ),

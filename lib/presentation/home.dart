@@ -249,22 +249,34 @@ class _PokemonTile extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(8.0)),
           side: BorderSide(color: scheme.onSurface),
         ),
-        leading: Container(
-          height: 48.0,
-          width: 48.0,
-          alignment: Alignment.center,
-          child: SvgPicture.network(
-            key: ValueKey(pokemon.id),
-            pokemon.image,
-            semanticsLabel: pokemon.name,
+        leading: Hero(
+          tag: pokemon.id,
+          placeholderBuilder: (context, size, child) {
+            final Color color = Theme.of(context).brightness == Brightness.dark
+                ? Colors.white24
+                : Colors.black54;
+            return ColorFiltered(
+              colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+              child: child,
+            );
+          },
+          child: Container(
             height: 48.0,
             width: 48.0,
-            allowDrawingOutsideViewBox: false,
-            fit: BoxFit.contain,
-            placeholderBuilder: (BuildContext context) => const Image(
-              image: AssetImage(PokemonIcons.pokeball),
-              height: 32.0,
-              width: 32.0,
+            alignment: Alignment.center,
+            child: SvgPicture.network(
+              key: ValueKey(pokemon.id),
+              pokemon.image,
+              semanticsLabel: pokemon.name,
+              height: 48.0,
+              width: 48.0,
+              allowDrawingOutsideViewBox: false,
+              fit: BoxFit.contain,
+              placeholderBuilder: (BuildContext context) => const Image(
+                image: AssetImage(PokemonIcons.pokeball),
+                height: 32.0,
+                width: 32.0,
+              ),
             ),
           ),
         ),
