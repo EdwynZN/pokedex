@@ -20,7 +20,7 @@ class FilterBar extends HookWidget {
     final store = context.read<FilterStore>();
     final animationController = useAnimationController(
       animationBehavior: AnimationBehavior.preserve,
-      duration: const Duration(milliseconds: 450),
+      duration: const Duration(seconds: 1),
       initialValue: !store.isLoading && !store.hasError ? 0 : 1.0,
       keys: const [],
     );
