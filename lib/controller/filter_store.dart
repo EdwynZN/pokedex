@@ -37,6 +37,15 @@ abstract class _FilterStore with Store {
   PokemonFilter _selectedFilter = const PokemonFilter();
 
   @computed
+  bool get isLoading => _future.status == FutureStatus.pending;
+
+  @computed
+  bool get hasError => _future.status == FutureStatus.rejected;
+
+  @computed
+  Object? get error => _future.error;
+
+  @computed
   bool get hasFilterType => _selectedFilter.types.isNotEmpty;
 
   @computed

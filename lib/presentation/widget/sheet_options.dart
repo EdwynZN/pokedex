@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:poke_app/presentation/model/field_option.dart';
 import 'package:poke_app/presentation/model/result.dart';
+import 'package:poke_app/utils/constraints.dart';
 import 'package:poke_app/utils/string_extensions.dart';
 
 Future<Result<Set<E>>?> showOptionsSheet<E>({
@@ -72,8 +73,9 @@ class FilteredOptions<E> extends HookWidget {
           pinned: true,
           centerTitle: false,
           actions: [
-            TextButton(
-              child: const Text('Save'),
+            IconButton.filled(
+              icon: const Icon(Icons.save),
+              tooltip: 'Save',
               onPressed: () {
                 Navigator.pop(
                   context,
@@ -86,12 +88,18 @@ class FilteredOptions<E> extends HookWidget {
                 );
               },
             ),
-            TextButton(
-              child: const Text('Clear'),
+            gap8,
+            IconButton.filledTonal(
+              icon: Icon(
+                Icons.clear_all,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
+              tooltip: 'Clear All',
               onPressed: () {
                 Navigator.pop(context, Result<Set<E>>(result: const {}));
               },
             ),
+            gap8,
           ],
           title: Text(
             title,

@@ -42,7 +42,6 @@ class PokemonHome extends HookWidget {
   Widget build(BuildContext context) {
     final controller = useScrollController(keys: const []);
     final pokemonStore = context.watch<PokedexStore>();
-    final filterStore = context.watch<FilterStore>();
     _usePagination(paging: pokemonStore, controller: controller);
     return ReactionBuilder(
       builder: (context) {
@@ -53,28 +52,21 @@ class PokemonHome extends HookWidget {
           pokemonStore.changeFilter,
         );
       },
-      child: Observer(
-        builder: (context) {
-          final hideFAB = pokemonStore.pokemons.isEmpty;
-          final hideFilters = filterStore.filters == null;
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Pokedex'),
-              centerTitle: true,
-              elevation: 0.0,
-              bottom: hideFilters
-                  ? null
-                  : const PreferredSize(
-                      preferredSize: Size.fromHeight(kToolbarHeight),
-                      child: FilterBar(),
-                    ),
-            ),
-            body: Scrollbar(
-              controller: controller,
-              child: _PokemonListView(scrollController: controller),
-            ),
-            floatingActionButton: hideFAB
-                ? null
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Pokedex'),
+          centerTitle: true,
+          elevation: 0.0,
+          bottom: const PreferredSize(
+            preferredSize: Size.fromHeight(kToolbarHeight),
+            child: FilterBar(),
+          ),
+        ),
+        body: _PokemonListView(scrollController: controller),
+        floatingActionButton: Observer(
+          builder: (context) {
+            return context.watch<PokedexStore>().pokemons.isEmpty
+                ? const SizedBox()
                 : FloatingActionButton(
                     onPressed: () => controller.animateTo(
                       0,
@@ -82,9 +74,9 @@ class PokemonHome extends HookWidget {
                       curve: Curves.easeInOutCubicEmphasized,
                     ),
                     child: const Icon(Icons.arrow_upward_outlined),
-                  ),
-          );
-        },
+                  );
+          },
+        ),
       ),
     );
   }
@@ -119,18 +111,31 @@ class _PokemonListView extends StatelessObserverWidget {
     }
     final pokemons = store.pokemons;
     bool isValid = pokemons.isNotEmpty;
-    return ListView.builder(
-      key: const ValueKey('PokemonListView'),
+    return Scrollbar(
       controller: scrollController,
-      padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 0.0),
-      itemBuilder: (context, index) {
-        if (isValid && index < pokemons.length) {
-          return _PokemonTile(pokemon: pokemons[index]);
-        } else if (index == pokemons.length) {
-          return _LastItem(index: index);
-        }
-        return null;
-      },
+      child: ListView.builder(
+        key: const ValueKey('PokemonListView'),
+        controller: scrollController,
+        padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 0.0),
+        itemBuilder: (context, index) {
+          /* if (store.isLoading) {
+            index--;
+            if (index == -1) {
+              return const Padding(
+                padding: EdgeInsets.only(bottom: 8),
+                child: LinearProgressIndicator(minHeight: 8.0),
+              );
+            }
+          } */
+
+          if (isValid && index < pokemons.length) {
+            return _PokemonTile(pokemon: pokemons[index]);
+          } else if (index == pokemons.length) {
+            return _LastItem(index: index);
+          }
+          return null;
+        },
+      ),
     );
   }
 }
@@ -218,6 +223,7 @@ class _PokemonTile extends StatelessWidget {
           width: 48.0,
           alignment: Alignment.center,
           child: SvgPicture.network(
+            key: ValueKey(pokemon.id),
             pokemon.image,
             semanticsLabel: pokemon.name,
             height: 48.0,

@@ -13,6 +13,7 @@ import 'package:poke_app/domain/pokemon/model/pokemon.dart';
 import 'package:poke_app/presentation/widget/bloc_sliver.dart';
 import 'package:poke_app/presentation/widget/error_header.dart';
 import 'package:poke_app/presentation/widget/page_indicator.dart';
+import 'package:poke_app/presentation/widget/pokeball_loader.dart';
 import 'package:poke_app/presentation/widget/type_chip.dart';
 import 'package:poke_app/utils/constraints.dart';
 import 'package:poke_app/utils/string_extensions.dart';
@@ -57,10 +58,7 @@ class PokemonDetailsScreen extends HookWidget {
           final detail = context.watch<PokemonDetailStore>();
           final List<Widget> list;
           if (detail.isLoading) {
-            list = const [
-              SliverToBoxAdapter(
-                child: LinearProgressIndicator(minHeight: 8.0),
-              ),
+            list = const [SliverToBoxAdapter(child: PokeballLoader()),
             ];
           } else if (detail.error != null) {
             final error = detail.error!;
@@ -603,20 +601,27 @@ class _ImageGallerySheet extends StatelessWidget {
                       controller: controller,
                       itemBuilder: (context, index) {
                         final image = images[index];
-                        return CachedNetworkImage(
-                          memCacheHeight: 150,
-                          height: 150,
-                          width: 150,
-                          memCacheWidth: 150,
-                          fit: BoxFit.contain,
-                          alignment: Alignment.center,
-                          cacheManager: manager,
-                          imageUrl: image,
-                          placeholder: (_, __) => const Center(
-                            child: Image(
-                              image: AssetImage(PokemonIcons.pokeball),
-                              height: 32.0,
-                              width: 32.0,
+                        return SizedBox.expand(
+                          child: InteractiveViewer(
+                            panEnabled: true,
+                            minScale: 1,
+                            maxScale: 2.5,
+                            child: CachedNetworkImage(
+                              memCacheHeight: 150,
+                              height: 150,
+                              width: 150,
+                              memCacheWidth: 150,
+                              fit: BoxFit.contain,
+                              alignment: Alignment.center,
+                              cacheManager: manager,
+                              imageUrl: image,
+                              placeholder: (_, __) => const Center(
+                                child: Image(
+                                  image: AssetImage(PokemonIcons.pokeball),
+                                  height: 32.0,
+                                  width: 32.0,
+                                ),
+                              ),
                             ),
                           ),
                         );
@@ -626,6 +631,7 @@ class _ImageGallerySheet extends StatelessWidget {
                   ),
                   gap8,
                   PageIndicator(controller: controller, count: images.length),
+                  gap8,
                 ],
               ),
             );

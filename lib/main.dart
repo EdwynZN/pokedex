@@ -122,6 +122,10 @@ class PokedexApp extends StatelessObserverWidget {
       theme: themeStore.light,
       darkTheme: themeStore.dark,
       themeMode: themeStore.mode,
+      themeAnimationStyle: AnimationStyle(
+        curve: Curves.easeInOutCubicEmphasized,
+        duration: const Duration(milliseconds: 450),
+      ),
       routerConfig: router,
     );
   }

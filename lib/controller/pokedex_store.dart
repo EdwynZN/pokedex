@@ -83,11 +83,11 @@ abstract class _PokedexStore with Store {
 
   Future<void> changeFilter(PokemonFilter filter) async {
     _filter = filter;
-    _refresh();
+    _refresh(true);
   }
 
   @action
-  Future<void> _refresh() async {
+  Future<void> _refresh([bool clearOnError = false]) async {
     _isLoading = true;
     _error = null;
     try {
@@ -105,6 +105,9 @@ abstract class _PokedexStore with Store {
       );
     } catch (e) {
       _error = e;
+      if (clearOnError) {
+        pokemons.clear();
+      }
     } finally {
       _isLoading = false;
     }

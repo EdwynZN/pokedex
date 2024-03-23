@@ -3,7 +3,7 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 
 class ThemeFlex {
-  ThemeFlex([this.scheme = FlexScheme.dellGenoa]);
+  ThemeFlex([this.scheme = FlexScheme.redM3]);
 
   factory ThemeFlex.fromString(String color) {
     if (color.isEmpty) {
