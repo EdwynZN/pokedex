@@ -15,10 +15,14 @@ Map<String, dynamic> _readDetails(Map<dynamic, dynamic> map, String key) {
   return sprites.first as Map<String, dynamic>;
 }
 
-String _moveWrapper(Map<dynamic, dynamic> map, String key) => _unwrap(map, key, 'move');
-String _typeWrapper(Map<dynamic, dynamic> map, String key) => _unwrap(map, key, 'type');
-String _abilityWrapper(Map<dynamic, dynamic> map, String key) => _unwrap(map, key, 'ability');
-String _statWrapper(Map<dynamic, dynamic> map, String key) => _unwrap(map, key, 'stat');
+String _moveWrapper(Map<dynamic, dynamic> map, String key) =>
+    _unwrap(map, key, 'move');
+String _typeWrapper(Map<dynamic, dynamic> map, String key) =>
+    _unwrap(map, key, 'type');
+String _abilityWrapper(Map<dynamic, dynamic> map, String key) =>
+    _unwrap(map, key, 'ability');
+String _statWrapper(Map<dynamic, dynamic> map, String key) =>
+    _unwrap(map, key, 'stat');
 
 String _unwrap(Map<dynamic, dynamic> map, String key, String outterKey) {
   final sprites = map[outterKey] as Map<dynamic, dynamic>;
@@ -26,9 +30,25 @@ String _unwrap(Map<dynamic, dynamic> map, String key, String outterKey) {
 }
 
 @freezed
+class PokeGraphShallowResponse with _$PokeGraphShallowResponse {
+  const PokeGraphShallowResponse._();
+
+  const factory PokeGraphShallowResponse({
+    required final int id,
+    required final String name,
+  }) = _PokeGraphShallowResponse;
+
+  String get image =>
+      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/$id.svg';
+
+  factory PokeGraphShallowResponse.fromJson(Map<String, dynamic> json) =>
+      _$PokeGraphShallowResponseFromJson(json);
+}
+
+@freezed
 class PokeGraphResponse with _$PokeGraphResponse {
   const PokeGraphResponse._();
-  
+
   const factory PokeGraphResponse({
     @JsonKey(disallowNullValue: true) required final int id,
     @JsonKey(disallowNullValue: true) required final String name,
@@ -39,33 +59,41 @@ class PokeGraphResponse with _$PokeGraphResponse {
   factory PokeGraphResponse.fromJson(Map<String, dynamic> json) =>
       _$PokeGraphResponseFromJson(json);
 
-  Pokemon toDomain() => Pokemon(
+  Pokemon toDomain(bool isFavorite) => Pokemon(
         id: id,
         name: name,
         height: details.height,
         weight: details.weight,
+        isFavorite: isFavorite,
         baseExperience: details.baseExperience,
         color: color.value,
-        image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/$id.svg',
+        image:
+            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/$id.svg',
         sprite: Sprite(
           front: details.sprites.front,
           back: details.sprites.back,
         ),
         femaleSprite: details.sprites.frontFemale == null ||
-          details.sprites.backFemale == null ? null : Sprite(
-          back: details.sprites.backFemale!,
-          front: details.sprites.frontFemale!,
-        ),
+                details.sprites.backFemale == null
+            ? null
+            : Sprite(
+                back: details.sprites.backFemale!,
+                front: details.sprites.frontFemale!,
+              ),
         shinySprite: details.sprites.frontShiny == null ||
-          details.sprites.backShiny == null ? null : Sprite(
-          back: details.sprites.backShiny!,
-          front: details.sprites.frontShiny!,
-        ),
+                details.sprites.backShiny == null
+            ? null
+            : Sprite(
+                back: details.sprites.backShiny!,
+                front: details.sprites.frontShiny!,
+              ),
         shinyFemaleSprite: details.sprites.frontShinyFemale == null ||
-          details.sprites.backShinyFemale == null ? null : Sprite(
-          back: details.sprites.backShinyFemale!,
-          front: details.sprites.frontShinyFemale!,
-        ),
+                details.sprites.backShinyFemale == null
+            ? null
+            : Sprite(
+                back: details.sprites.backShinyFemale!,
+                front: details.sprites.frontShinyFemale!,
+              ),
         abilities: details.abilities
             .map(
               (a) => Ability(
@@ -114,8 +142,10 @@ class PokeGraphDetails with _$PokeGraphDetails {
   const factory PokeGraphDetails({
     @JsonKey(disallowNullValue: true) required final int height,
     @JsonKey(disallowNullValue: true) required final int weight,
-    @JsonKey(name: 'base_experience', disallowNullValue: true) required final int baseExperience,
-    @JsonKey(readValue: _readSprite, disallowNullValue: true) required final PokeGraphSprite sprites,
+    @JsonKey(name: 'base_experience', disallowNullValue: true)
+    required final int baseExperience,
+    @JsonKey(readValue: _readSprite, disallowNullValue: true)
+    required final PokeGraphSprite sprites,
     @Default([]) final List<PokeGraphAbility> abilities,
     @Default([]) @JsonKey(name: 'moves') final List<PokeGraphMove> movements,
     @Default([]) final List<PokeGraphStat> stats,
@@ -129,7 +159,8 @@ class PokeGraphDetails with _$PokeGraphDetails {
 @freezed
 class PokeGraphMove with _$PokeGraphMove {
   const factory PokeGraphMove({
-    @JsonKey(readValue: _moveWrapper, disallowNullValue: true) required final String name,
+    @JsonKey(readValue: _moveWrapper, disallowNullValue: true)
+    required final String name,
   }) = _PokeGraphMove;
 
   factory PokeGraphMove.fromJson(Map<String, dynamic> json) =>
@@ -139,7 +170,8 @@ class PokeGraphMove with _$PokeGraphMove {
 @freezed
 class PokeGraphStat with _$PokeGraphStat {
   const factory PokeGraphStat({
-    @JsonKey(readValue: _statWrapper, disallowNullValue: true) required final String name,
+    @JsonKey(readValue: _statWrapper, disallowNullValue: true)
+    required final String name,
     required final int value,
   }) = _PokeGraphStat;
 
@@ -150,7 +182,8 @@ class PokeGraphStat with _$PokeGraphStat {
 @freezed
 class PokeGraphType with _$PokeGraphType {
   const factory PokeGraphType({
-    @JsonKey(readValue: _typeWrapper, disallowNullValue: true) required final String name,
+    @JsonKey(readValue: _typeWrapper, disallowNullValue: true)
+    required final String name,
   }) = _PokeGraphType;
 
   factory PokeGraphType.fromJson(Map<String, dynamic> json) =>
@@ -160,7 +193,8 @@ class PokeGraphType with _$PokeGraphType {
 @freezed
 class PokeGraphAbility with _$PokeGraphAbility {
   const factory PokeGraphAbility({
-    @JsonKey(readValue: _abilityWrapper, disallowNullValue: true) required final String name,
+    @JsonKey(readValue: _abilityWrapper, disallowNullValue: true)
+    required final String name,
     required final bool secret,
   }) = _PokeGraphAbility;
 
@@ -171,8 +205,10 @@ class PokeGraphAbility with _$PokeGraphAbility {
 @freezed
 class PokeGraphSprite with _$PokeGraphSprite {
   const factory PokeGraphSprite({
-    @JsonKey(name: 'front_default', disallowNullValue: true) required final String front,
-    @JsonKey(name: 'back_default', disallowNullValue: true) required final String back,
+    @JsonKey(name: 'front_default', disallowNullValue: true)
+    required final String front,
+    @JsonKey(name: 'back_default', disallowNullValue: true)
+    required final String back,
     @JsonKey(name: 'front_shiny') final String? frontShiny,
     @JsonKey(name: 'back_shiny') final String? backShiny,
     @JsonKey(name: 'front_female') final String? frontFemale,

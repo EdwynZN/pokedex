@@ -1,7 +1,6 @@
 import 'package:graphql/client.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon_filter.dart';
-import 'package:poke_app/domain/pokemon/model/pokemon_shallow.dart';
-import 'package:poke_app/infrastructure/graph_api/poke_graph_response.dart';
+import 'package:poke_app/infrastructure/graph_api/model/poke_graph_response.dart';
 import 'package:poke_app/infrastructure/graph_api/pokemon_graph_filter_query.dart';
 import 'package:poke_app/infrastructure/graph_api/pokemon_graph_queries.dart';
 
@@ -10,7 +9,7 @@ class PokeGraphApi {
 
   PokeGraphApi(this.graphClient);
 
-  Future<List<PokemonShallow>> getPokemons({
+  Future<List<PokeGraphShallowResponse>> getPokemons({
     int offset = 0,
     int limit = 60,
     required List<int> generationsID,
@@ -24,7 +23,7 @@ class PokeGraphApi {
       filterColors: colorsID.isNotEmpty,
       search: searchExists,
     );
-    final options = QueryOptions<List<PokemonShallow>>(
+    final options = QueryOptions<List<PokeGraphShallowResponse>>(
       document: gql(query),
       variables: {
         'offset': offset,
@@ -40,12 +39,8 @@ class PokeGraphApi {
         final pokemons = data['pokemons'] as List;
         return pokemons
             .map(
-              (e) => PokemonShallow.fromJson(
-                (e as Map<String, dynamic>)
-                  ..addAll({
-                    'image':
-                        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${e['id']}.svg'
-                  }),
+              (e) => PokeGraphShallowResponse.fromJson(
+                (e as Map<String, dynamic>),
               ),
             )
             .toList();
@@ -67,7 +62,7 @@ class PokeGraphApi {
       throw Exception('No data');
     }
 
-    final List<PokemonShallow> p;
+    final List<PokeGraphShallowResponse> p;
     try {
       p = result.parsedData!;
     } catch (e) {

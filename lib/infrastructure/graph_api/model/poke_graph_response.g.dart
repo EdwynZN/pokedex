@@ -6,6 +6,20 @@ part of 'poke_graph_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+_$PokeGraphShallowResponseImpl _$$PokeGraphShallowResponseImplFromJson(
+        Map<String, dynamic> json) =>
+    _$PokeGraphShallowResponseImpl(
+      id: json['id'] as int,
+      name: json['name'] as String,
+    );
+
+Map<String, dynamic> _$$PokeGraphShallowResponseImplToJson(
+        _$PokeGraphShallowResponseImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+    };
+
 _$PokeGraphResponseImpl _$$PokeGraphResponseImplFromJson(
     Map<String, dynamic> json) {
   $checkKeys(

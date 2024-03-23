@@ -1,25 +1,63 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:graphql/client.dart';
 import 'package:poke_app/domain/failure.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon_filter.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon_shallow.dart';
 import 'package:poke_app/domain/pokemon/repository.dart';
+import 'package:poke_app/infrastructure/graph_api/model/poke_graph_response.dart';
 import 'package:poke_app/infrastructure/graph_api/poke_graph_api.dart';
+import 'package:poke_app/infrastructure/local_object_box_api/model/ob_local_pokemon.dart';
+import 'package:poke_app/infrastructure/local_object_box_api/object_box_pokemon_source.dart';
 import 'package:poke_app/infrastructure/log_service_mixin.dart';
 
-final class PokemonGraphRepository with FirebaseLog implements PokemonRepository {
-  final PokeGraphApi api;
+typedef _PokemonShallowResponses = ({
+  List<PokeGraphShallowResponse> api,
+  List<ObLocalPokemon> local
+});
 
-  const PokemonGraphRepository(this.api);
+List<PokemonShallow> _filterPokemons(_PokemonShallowResponses responses) {
+  final List<PokemonShallow> pokemons = [];
+  for (final pokemon in responses.api) {
+    final bool isFavorite = responses.local
+        .singleWhere((element) => element.id == pokemon.id)
+        .isFavorite;
+    pokemons.add(PokemonShallow(
+      id: pokemon.id,
+      name: pokemon.name,
+      image: pokemon.image,
+      isFavorite: isFavorite,
+    ));
+  }
+  return pokemons;
+}
+
+final class PokemonGraphRepository
+    with FirebaseLog
+    implements PokemonRepository {
+  final PokeGraphApi api;
+  final PokemonOBSource oBSource;
+
+  const PokemonGraphRepository(this.api, this.oBSource);
 
   @override
   Future<Either<DomainFailure, Pokemon>> getDetail({required int id}) async {
     try {
       final response = await api.getPokemonDetail(id);
-      return Right(response.toDomain());
+      final localResponse = await oBSource.getAllByID([id]);
+      bool isFavorite = false;
+      if (localResponse.isNotEmpty) {
+        isFavorite = localResponse.single.isFavorite;
+      }
+      return Right(response.toDomain(isFavorite));
     } on OperationException catch (e) {
-      recordError(e, e.originalStackTrace, reason: 'getDetail', information: [id]);
+      recordError(
+        e,
+        e.originalStackTrace,
+        reason: 'getDetail',
+        information: [id],
+      );
       final errors = e.graphqlErrors;
       if (errors.isEmpty) {
         return Left(ItemFailure(message: 'Not Found', name: id.toString()));
@@ -39,7 +77,7 @@ final class PokemonGraphRepository with FirebaseLog implements PokemonRepository
     String? query,
   }) async {
     try {
-      final response = await api.getPokemons(
+      final apiResponse = await api.getPokemons(
         offset: offset,
         limit: limit,
         generationsID: filter.generations.map((e) => e.id).toList(),
@@ -47,7 +85,14 @@ final class PokemonGraphRepository with FirebaseLog implements PokemonRepository
         colorsID: filter.colors.map((e) => e.id).toList(),
         search: query,
       );
-      return Right(response);
+      final favResponse = await oBSource.getAllByID(
+        apiResponse.map((e) => e.id).toList(),
+      );
+
+      final _PokemonShallowResponses responses =
+          (api: apiResponse, local: favResponse);
+      final pokemons = await compute(_filterPokemons, responses);
+      return Right(pokemons);
     } on OperationException catch (e) {
       recordError(
         e,

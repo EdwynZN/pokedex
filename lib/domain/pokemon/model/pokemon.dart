@@ -15,6 +15,7 @@ class Pokemon with _$Pokemon {
     required final String image,
     required final Sprite sprite,
     required final String color,
+    required final bool isFavorite,
     final Sprite? femaleSprite,
     final Sprite? shinySprite,
     final Sprite? shinyFemaleSprite,

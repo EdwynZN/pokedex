@@ -1,9 +1,8 @@
 import 'package:poke_app/infrastructure/local_object_box_api/model/ob_local_pokemon.dart';
 import 'package:poke_app/objectbox.g.dart' as ob;
-import 'package:poke_app/objectbox.g.dart';
 
 class PokemonOBSource {
-  late final Box<ObLocalPokemon> _box;
+  late final ob.Box<ObLocalPokemon> _box;
 
   PokemonOBSource({
     required ob.Store store,
@@ -11,11 +10,35 @@ class PokemonOBSource {
 
   Future<List<ObLocalPokemon>> getFavorites() async {
     final query = _box
-        .query(ObLocalPokemon_.isFavorite.equals(true))
-        .order(ObLocalPokemon_.id)
+        .query(ob.ObLocalPokemon_.isFavorite.equals(true))
+        .order(ob.ObLocalPokemon_.id)
         .build();
 
     return query.find();
+  }
+
+  Future<List<ObLocalPokemon>> getAllByID(List<int> ids) async {
+    final ob.Condition<ObLocalPokemon> condition;
+    switch (ids.length) {
+      case 0:
+        return [];
+      case 1:
+        condition = ob.ObLocalPokemon_.id.equals(ids.first);
+        break;
+      default:
+        ids.sort();
+        final int min = ids.first;
+        final int max = ids.last;
+        condition = ob.ObLocalPokemon_.id.between(min, max);
+        break;
+    }
+    final query = _box
+        .query(condition)
+        .order(ob.ObLocalPokemon_.id)
+        .build();
+
+    final pokemons = query.find();
+    return pokemons..retainWhere((element) => ids.contains(element.id));
   }
 
   Future<ObLocalPokemon> update({

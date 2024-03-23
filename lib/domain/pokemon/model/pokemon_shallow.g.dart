@@ -11,6 +11,7 @@ _$PokemonShallowImpl _$$PokemonShallowImplFromJson(Map<String, dynamic> json) =>
       id: json['id'] as int,
       name: json['name'] as String,
       image: json['image'] as String,
+      isFavorite: json['isFavorite'] as bool,
     );
 
 Map<String, dynamic> _$$PokemonShallowImplToJson(
@@ -19,4 +20,5 @@ Map<String, dynamic> _$$PokemonShallowImplToJson(
       'id': instance.id,
       'name': instance.name,
       'image': instance.image,
+      'isFavorite': instance.isFavorite,
     };

@@ -9,6 +9,7 @@ class PokemonShallow with _$PokemonShallow {
     required final int id,
     required final String name,
     required final String image,
+    required final bool isFavorite,
   }) = _PokemonShallow;
 	
   factory PokemonShallow.fromJson(Map<String, dynamic> json) =>

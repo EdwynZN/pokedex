@@ -80,8 +80,11 @@ void main() {
           ),
         ),
         Provider<PokemonRepository>(
-          create: (context) =>
-              PokemonGraphRepository(context.read<PokeGraphApi>()),
+          create: (context) {
+            final api = context.read<PokeGraphApi>();
+            final local = context.read<PokemonOBSource>();
+            return PokemonGraphRepository(api, local);
+          },
         ),
         Provider<FilterRepository>(
           create: (context) =>
