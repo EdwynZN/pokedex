@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:poke_app/controller/pokemon_details_store.dart';
+import 'package:poke_app/presentation/controller/pokemon_details_store.dart';
 import 'package:poke_app/domain/pokemon/repository.dart';
 import 'package:poke_app/presentation/routes/routes_constants.dart';
 import 'package:poke_app/presentation/details.dart';

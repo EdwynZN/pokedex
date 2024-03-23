@@ -7,7 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobx/mobx.dart';
 import 'package:poke_app/assets/pokemon_icons.dart';
-import 'package:poke_app/controller/pokemon_details_store.dart';
+import 'package:poke_app/presentation/controller/pokemon_details_store.dart';
 import 'package:poke_app/domain/failure.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon.dart';
 import 'package:poke_app/presentation/widget/bloc_sliver.dart';
