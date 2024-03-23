@@ -9,6 +9,7 @@ abstract interface class PokemonRepository {
     int offset = 0,
     int limit = 60,
     PokemonFilter filter = const PokemonFilter(),
+    String? query,
   });
 
   Future<Either<DomainFailure, Pokemon>> getDetail({required int id});

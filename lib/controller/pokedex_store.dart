@@ -12,7 +12,9 @@ abstract class _PokedexStore with Store {
   final PokemonRepository _repository;
   late ReactionDisposer _disposer;
 
-  _PokedexStore(this._repository) : _filter = const PokemonFilter() {
+  _PokedexStore(
+    this._repository,
+  ) {
     _disposer = when(
       (_) => !_isLoading && !hasError && pokemons.length < _pageSize,
       () {
@@ -22,7 +24,8 @@ abstract class _PokedexStore with Store {
     _fetch();
   }
 
-  PokemonFilter _filter;
+  PokemonFilter _filter = const PokemonFilter();
+  String _pokemonSearch = '';
 
   final ObservableList<PokemonShallow> _pokemons =
       ObservableList<PokemonShallow>();
@@ -60,6 +63,7 @@ abstract class _PokedexStore with Store {
       offset: offset,
       limit: _pageSize,
       filter: _filter,
+      query: _pokemonSearch,
     );
     return fetch.fold((l) => throw l, (r) => r);
   }
@@ -83,6 +87,14 @@ abstract class _PokedexStore with Store {
 
   Future<void> changeFilter(PokemonFilter filter) async {
     _filter = filter;
+    _refresh(true);
+  }
+
+  Future<void> changeSearch(String searchQuery) async {
+    if (searchQuery == _pokemonSearch) {
+      return;
+    }
+    _pokemonSearch = searchQuery;
     _refresh(true);
   }
 

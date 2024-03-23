@@ -16,10 +16,13 @@ class PokeGraphApi {
     required List<int> generationsID,
     required List<int> typesID,
     required List<int> colorsID,
+    String? search,
   }) async {
+    final searchExists = search != null && search.isNotEmpty;
     final query = pokemonsQueryWithFilters(
       filterTypes: typesID.isNotEmpty,
       filterColors: colorsID.isNotEmpty,
+      search: searchExists,
     );
     final options = QueryOptions<List<PokemonShallow>>(
       document: gql(query),
@@ -29,6 +32,7 @@ class PokeGraphApi {
         if (generationsID.isNotEmpty) 'generations': generationsID,
         if (typesID.isNotEmpty) 'types': typesID,
         if (colorsID.isNotEmpty) 'colors': colorsID,
+        if (searchExists) 'search': search,
       },
       fetchPolicy: FetchPolicy.cacheFirst,
       cacheRereadPolicy: CacheRereadPolicy.mergeOptimistic,

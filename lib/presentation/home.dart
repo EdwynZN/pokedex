@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -11,9 +13,35 @@ import 'package:poke_app/controller/pokedex_store.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon_shallow.dart';
 import 'package:poke_app/presentation/widget/error_header.dart';
 import 'package:poke_app/presentation/widget/filter_bar.dart';
+import 'package:poke_app/presentation/widget/search_appbar.dart';
 import 'package:poke_app/utils/constraints.dart';
 import 'package:poke_app/utils/string_extensions.dart';
 import 'package:provider/provider.dart';
+
+void useSearch(
+  TextEditingController controller,
+  PokedexStore store, [
+  Duration duration = const Duration(milliseconds: 500),
+]) {
+  useEffect(() {
+    Timer? timer;
+
+    void listener() {
+      timer?.cancel();
+      timer = Timer(duration, () {
+        store.changeSearch(controller.text);
+      });
+    }
+
+    controller.addListener(listener);
+    store.changeSearch('');
+    return () {
+      timer?.cancel();
+      controller.removeListener(listener);
+      store.changeSearch('');
+    };
+  }, [controller, store]);
+}
 
 void _usePagination({
   required PokedexStore paging,
@@ -40,8 +68,10 @@ class PokemonHome extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textController = useTextEditingController(keys: const []);
     final controller = useScrollController(keys: const []);
     final pokemonStore = context.watch<PokedexStore>();
+    useSearch(textController, pokemonStore);
     _usePagination(paging: pokemonStore, controller: controller);
     return ReactionBuilder(
       builder: (context) {
@@ -53,7 +83,8 @@ class PokemonHome extends HookWidget {
         );
       },
       child: Scaffold(
-        appBar: AppBar(
+        appBar: SearchAppbar(
+          textController: textController,
           title: const Text('Pokedex'),
           centerTitle: true,
           elevation: 0.0,

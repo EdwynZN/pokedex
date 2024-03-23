@@ -26,6 +26,7 @@ final class PokemonGraphRepository implements PokemonRepository {
     int offset = 0,
     int limit = 60,
     PokemonFilter filter = const PokemonFilter(),
+    String? query,
   }) async {
     try {
       final response = await api.getPokemons(
@@ -34,6 +35,7 @@ final class PokemonGraphRepository implements PokemonRepository {
         generationsID: filter.generations.map((e) => e.id).toList(),
         typesID: filter.types.map((e) => e.id).toList(),
         colorsID: filter.colors.map((e) => e.id).toList(),
+        search: query,
       );
       return Right(response);
     } catch (e) {

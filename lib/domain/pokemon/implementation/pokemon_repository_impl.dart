@@ -39,6 +39,7 @@ final class PokemonRemoteRepository implements PokemonRepository {
     int offset = 0,
     int limit = 60,
     PokemonFilter filter = const PokemonFilter(),
+    String? query,
   })  async {
     try {
       final response = await api.getPokemons({

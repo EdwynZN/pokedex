@@ -1,15 +1,19 @@
 String pokemonsQueryWithFilters({
   required bool filterTypes,
   required bool filterColors,
+  required bool search,
 }) {
+  final String searchType = search
+    ? ''',
+    name: {_iregex: \$search}'''
+    : '';
   final String whereType = filterTypes
       ? ''',
       pokemon_v2_pokemons: {
         pokemon_v2_pokemontypes: {
           type_id: {_in: \$types}
         }
-      }
-  '''
+      }'''
       : '';
   final String whereColors = filterColors
       ? ''',
@@ -19,8 +23,7 @@ String pokemonsQueryWithFilters({
               _in: \$colors
             }
           }
-        }
-  '''
+        }'''
       : '';
 
   return '''
@@ -30,6 +33,7 @@ String pokemonsQueryWithFilters({
       \$generations: [Int!]=[1,2]
       ${filterTypes ? ',\$types: [Int!]!' : ''}
       ${filterColors ? ',\$colors: [Int!]!' : ''}
+      ${search ? ',\$search: String!' : ''}
     ) {
     pokemons: pokemon_v2_pokemonspecies(
       limit: \$limit,
@@ -39,7 +43,7 @@ String pokemonsQueryWithFilters({
           id: {
             _in: \$generations
           }
-        }$whereType$whereColors
+        }$whereType$whereColors$searchType
       },
       order_by: {id: asc}
     ) {

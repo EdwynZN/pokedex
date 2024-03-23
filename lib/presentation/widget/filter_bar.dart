@@ -17,9 +17,11 @@ class FilterBar extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final store = context.read<FilterStore>();
     final animationController = useAnimationController(
       animationBehavior: AnimationBehavior.preserve,
       duration: const Duration(milliseconds: 450),
+      initialValue: !store.isLoading && !store.hasError ? 0 : 1.0,
       keys: const [],
     );
     final theme = Theme.of(context);
@@ -96,6 +98,7 @@ class FilterBar extends HookWidget {
                 final store = context.watch<PokedexStore>();
                 final isLoadingPokemons = store.isLoading && store.hasValue;
                 return LinearProgressIndicator(
+                  backgroundColor: Colors.transparent,
                   value: isLoadingPokemons ? null : 0,
                   borderRadius: BorderRadius.circular(4.0),
                   minHeight: 2.0,
