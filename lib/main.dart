@@ -9,6 +9,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql/client.dart';
+import 'package:poke_app/infrastructure/local_object_box_api/object_box.dart';
+import 'package:poke_app/infrastructure/local_object_box_api/object_box_pokemon_source.dart';
 import 'package:poke_app/presentation/controller/filter_store.dart';
 import 'package:poke_app/presentation/controller/pokedex_store.dart';
 import 'package:poke_app/presentation/controller/theme_store.dart';
@@ -24,6 +26,7 @@ import 'package:provider/provider.dart';
 void main() {
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
+    final objectbox = await ObjectBox.create();
 
     /// Firebase initialization
     await Firebase.initializeApp(
@@ -49,6 +52,12 @@ void main() {
     SystemChrome.setPreferredOrientations(const [DeviceOrientation.portraitUp]);
     runApp(MultiProvider(
       providers: [
+        Provider<ObjectBox>.value(value: objectbox),
+        Provider<PokemonOBSource>(
+          create: (context) => PokemonOBSource(
+            store: context.read<ObjectBox>().store,
+          ),
+        ),
         Provider<ThemeStore>(create: (_) => ThemeStore()),
         Provider<GoRouter>(create: (_) => createRouter()),
         Provider<PokeGraphApi>(
