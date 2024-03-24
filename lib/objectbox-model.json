@@ -1,0 +1,53 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "2:2392058881291081978",
+      "lastPropertyId": "4:5614746979485077932",
+      "name": "ObLocalPokemon",
+      "properties": [
+        {
+          "id": "1:8927903726482665216",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:2051660241810050819",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:196051554429999889",
+          "name": "isFavorite",
+          "type": 1
+        },
+        {
+          "id": "4:5614746979485077932",
+          "name": "image",
+          "type": 9
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "2:2392058881291081978",
+  "lastIndexId": "0:0",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [
+    7055915226857696209
+  ],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [
+    9037501868784317180,
+    7576465053962123361,
+    7257943399400231215
+  ],
+  "retiredRelationUids": [],
+  "version": 1
+}
