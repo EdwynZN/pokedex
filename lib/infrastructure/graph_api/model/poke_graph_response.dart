@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon.dart';
+import 'package:poke_app/domain/pokemon/model/pokemon_shallow.dart';
 import 'package:poke_app/domain/pokemon/model/sprite.dart';
 
 part 'poke_graph_response.freezed.dart';
@@ -11,8 +12,8 @@ Map<String, dynamic> _readSprite(Map<dynamic, dynamic> map, String key) {
 }
 
 Map<String, dynamic> _readDetails(Map<dynamic, dynamic> map, String key) {
-  final sprites = (map[key] as List).cast<Map>();
-  return sprites.first as Map<String, dynamic>;
+  final details = (map[key] as List).cast<Map>();
+  return details.first as Map<String, dynamic>;
 }
 
 String _moveWrapper(Map<dynamic, dynamic> map, String key) =>
@@ -25,8 +26,8 @@ String _statWrapper(Map<dynamic, dynamic> map, String key) =>
     _unwrap(map, key, 'stat');
 
 String _unwrap(Map<dynamic, dynamic> map, String key, String outterKey) {
-  final sprites = map[outterKey] as Map<dynamic, dynamic>;
-  return sprites[key] as String;
+  final value = map[outterKey] as Map<dynamic, dynamic>;
+  return value[key] as String;
 }
 
 @freezed
@@ -53,13 +54,16 @@ class PokeGraphResponse with _$PokeGraphResponse {
     @JsonKey(disallowNullValue: true) required final int id,
     @JsonKey(disallowNullValue: true) required final String name,
     @JsonKey(disallowNullValue: true) required final PokeGraphColor color,
-    @JsonKey(readValue: _readDetails) required final PokeGraphDetails details,
+    @JsonKey(disallowNullValue: true, readValue: _readDetails)
+    required final PokeGraphDetails details,
+    @JsonKey(disallowNullValue: true)
+    required final PokeGraphEvolution evolutions,
   }) = _PokeGraphResponse;
 
   factory PokeGraphResponse.fromJson(Map<String, dynamic> json) =>
       _$PokeGraphResponseFromJson(json);
 
-  Pokemon toDomain(bool isFavorite) => Pokemon(
+  Pokemon toDomain(bool isFavorite, Map<int, bool> isFavoriteEvolution) => Pokemon(
         id: id,
         name: name,
         height: details.height,
@@ -69,6 +73,13 @@ class PokeGraphResponse with _$PokeGraphResponse {
         color: color.value,
         image:
             'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/$id.svg',
+        evolution: evolutions.pokemons.map((e) => PokemonEvolution(
+            id: e.id,
+            name: e.name,
+            image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${e.id}.svg',
+            isFavorite: isFavoriteEvolution[e.id] ?? false,
+          ),
+        ).toList(),
         sprite: Sprite(
           front: details.sprites.front,
           back: details.sprites.back,
@@ -125,6 +136,27 @@ class PokeGraphResponse with _$PokeGraphResponse {
             )
             .toList(),
       );
+}
+
+@freezed
+class PokeGraphEvolution with _$PokeGraphEvolution {
+  const factory PokeGraphEvolution({
+    @JsonKey(disallowNullValue: true) required final List<PokemonFromEvolution> pokemons,
+  }) = _PokeGraphEvolution;
+
+  factory PokeGraphEvolution.fromJson(Map<String, dynamic> json) =>
+      _$PokeGraphEvolutionFromJson(json);
+}
+
+@freezed
+class PokemonFromEvolution with _$PokemonFromEvolution {
+  const factory PokemonFromEvolution({
+    @JsonKey(disallowNullValue: true) required final int id,
+    @JsonKey(disallowNullValue: true) required final String name,
+  }) = _PokemonFromEvolution;
+
+  factory PokemonFromEvolution.fromJson(Map<String, dynamic> json) =>
+      _$PokemonFromEvolutionFromJson(json);
 }
 
 @freezed

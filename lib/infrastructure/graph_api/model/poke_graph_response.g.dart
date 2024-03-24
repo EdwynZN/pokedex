@@ -24,7 +24,7 @@ _$PokeGraphResponseImpl _$$PokeGraphResponseImplFromJson(
     Map<String, dynamic> json) {
   $checkKeys(
     json,
-    disallowNullValues: const ['id', 'name', 'color'],
+    disallowNullValues: const ['id', 'name', 'color', 'details', 'evolutions'],
   );
   return _$PokeGraphResponseImpl(
     id: json['id'] as int,
@@ -32,6 +32,8 @@ _$PokeGraphResponseImpl _$$PokeGraphResponseImplFromJson(
     color: PokeGraphColor.fromJson(json['color'] as Map<String, dynamic>),
     details: PokeGraphDetails.fromJson(
         _readDetails(json, 'details') as Map<String, dynamic>),
+    evolutions:
+        PokeGraphEvolution.fromJson(json['evolutions'] as Map<String, dynamic>),
   );
 }
 
@@ -42,6 +44,45 @@ Map<String, dynamic> _$$PokeGraphResponseImplToJson(
       'name': instance.name,
       'color': instance.color.toJson(),
       'details': instance.details.toJson(),
+      'evolutions': instance.evolutions.toJson(),
+    };
+
+_$PokeGraphEvolutionImpl _$$PokeGraphEvolutionImplFromJson(
+    Map<String, dynamic> json) {
+  $checkKeys(
+    json,
+    disallowNullValues: const ['pokemons'],
+  );
+  return _$PokeGraphEvolutionImpl(
+    pokemons: (json['pokemons'] as List<dynamic>)
+        .map((e) => PokemonFromEvolution.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
+}
+
+Map<String, dynamic> _$$PokeGraphEvolutionImplToJson(
+        _$PokeGraphEvolutionImpl instance) =>
+    <String, dynamic>{
+      'pokemons': instance.pokemons.map((e) => e.toJson()).toList(),
+    };
+
+_$PokemonFromEvolutionImpl _$$PokemonFromEvolutionImplFromJson(
+    Map<String, dynamic> json) {
+  $checkKeys(
+    json,
+    disallowNullValues: const ['id', 'name'],
+  );
+  return _$PokemonFromEvolutionImpl(
+    id: json['id'] as int,
+    name: json['name'] as String,
+  );
+}
+
+Map<String, dynamic> _$$PokemonFromEvolutionImplToJson(
+        _$PokemonFromEvolutionImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
     };
 
 _$PokeGraphColorImpl _$$PokeGraphColorImplFromJson(Map<String, dynamic> json) {

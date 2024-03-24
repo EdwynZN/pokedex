@@ -11,6 +11,13 @@ class PokemonShallow with _$PokemonShallow {
     required final String image,
     required final bool isFavorite,
   }) = _PokemonShallow;
+
+  const factory PokemonShallow.evolution({
+    required final int id,
+    required final String name,
+    required final String image,
+    required final bool isFavorite,
+  }) = PokemonEvolution;
 	
   factory PokemonShallow.fromJson(Map<String, dynamic> json) =>
 			_$PokemonShallowFromJson(json);

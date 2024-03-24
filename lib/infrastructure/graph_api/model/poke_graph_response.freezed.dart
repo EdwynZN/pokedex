@@ -188,8 +188,10 @@ mixin _$PokeGraphResponse {
   String get name => throw _privateConstructorUsedError;
   @JsonKey(disallowNullValue: true)
   PokeGraphColor get color => throw _privateConstructorUsedError;
-  @JsonKey(readValue: _readDetails)
+  @JsonKey(disallowNullValue: true, readValue: _readDetails)
   PokeGraphDetails get details => throw _privateConstructorUsedError;
+  @JsonKey(disallowNullValue: true)
+  PokeGraphEvolution get evolutions => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -207,10 +209,13 @@ abstract class $PokeGraphResponseCopyWith<$Res> {
       {@JsonKey(disallowNullValue: true) int id,
       @JsonKey(disallowNullValue: true) String name,
       @JsonKey(disallowNullValue: true) PokeGraphColor color,
-      @JsonKey(readValue: _readDetails) PokeGraphDetails details});
+      @JsonKey(disallowNullValue: true, readValue: _readDetails)
+      PokeGraphDetails details,
+      @JsonKey(disallowNullValue: true) PokeGraphEvolution evolutions});
 
   $PokeGraphColorCopyWith<$Res> get color;
   $PokeGraphDetailsCopyWith<$Res> get details;
+  $PokeGraphEvolutionCopyWith<$Res> get evolutions;
 }
 
 /// @nodoc
@@ -230,6 +235,7 @@ class _$PokeGraphResponseCopyWithImpl<$Res, $Val extends PokeGraphResponse>
     Object? name = null,
     Object? color = null,
     Object? details = null,
+    Object? evolutions = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -248,6 +254,10 @@ class _$PokeGraphResponseCopyWithImpl<$Res, $Val extends PokeGraphResponse>
           ? _value.details
           : details // ignore: cast_nullable_to_non_nullable
               as PokeGraphDetails,
+      evolutions: null == evolutions
+          ? _value.evolutions
+          : evolutions // ignore: cast_nullable_to_non_nullable
+              as PokeGraphEvolution,
     ) as $Val);
   }
 
@@ -266,6 +276,14 @@ class _$PokeGraphResponseCopyWithImpl<$Res, $Val extends PokeGraphResponse>
       return _then(_value.copyWith(details: value) as $Val);
     });
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $PokeGraphEvolutionCopyWith<$Res> get evolutions {
+    return $PokeGraphEvolutionCopyWith<$Res>(_value.evolutions, (value) {
+      return _then(_value.copyWith(evolutions: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -280,12 +298,16 @@ abstract class _$$PokeGraphResponseImplCopyWith<$Res>
       {@JsonKey(disallowNullValue: true) int id,
       @JsonKey(disallowNullValue: true) String name,
       @JsonKey(disallowNullValue: true) PokeGraphColor color,
-      @JsonKey(readValue: _readDetails) PokeGraphDetails details});
+      @JsonKey(disallowNullValue: true, readValue: _readDetails)
+      PokeGraphDetails details,
+      @JsonKey(disallowNullValue: true) PokeGraphEvolution evolutions});
 
   @override
   $PokeGraphColorCopyWith<$Res> get color;
   @override
   $PokeGraphDetailsCopyWith<$Res> get details;
+  @override
+  $PokeGraphEvolutionCopyWith<$Res> get evolutions;
 }
 
 /// @nodoc
@@ -303,6 +325,7 @@ class __$$PokeGraphResponseImplCopyWithImpl<$Res>
     Object? name = null,
     Object? color = null,
     Object? details = null,
+    Object? evolutions = null,
   }) {
     return _then(_$PokeGraphResponseImpl(
       id: null == id
@@ -321,6 +344,10 @@ class __$$PokeGraphResponseImplCopyWithImpl<$Res>
           ? _value.details
           : details // ignore: cast_nullable_to_non_nullable
               as PokeGraphDetails,
+      evolutions: null == evolutions
+          ? _value.evolutions
+          : evolutions // ignore: cast_nullable_to_non_nullable
+              as PokeGraphEvolution,
     ));
   }
 }
@@ -332,7 +359,9 @@ class _$PokeGraphResponseImpl extends _PokeGraphResponse {
       {@JsonKey(disallowNullValue: true) required this.id,
       @JsonKey(disallowNullValue: true) required this.name,
       @JsonKey(disallowNullValue: true) required this.color,
-      @JsonKey(readValue: _readDetails) required this.details})
+      @JsonKey(disallowNullValue: true, readValue: _readDetails)
+      required this.details,
+      @JsonKey(disallowNullValue: true) required this.evolutions})
       : super._();
 
   factory _$PokeGraphResponseImpl.fromJson(Map<String, dynamic> json) =>
@@ -348,12 +377,15 @@ class _$PokeGraphResponseImpl extends _PokeGraphResponse {
   @JsonKey(disallowNullValue: true)
   final PokeGraphColor color;
   @override
-  @JsonKey(readValue: _readDetails)
+  @JsonKey(disallowNullValue: true, readValue: _readDetails)
   final PokeGraphDetails details;
+  @override
+  @JsonKey(disallowNullValue: true)
+  final PokeGraphEvolution evolutions;
 
   @override
   String toString() {
-    return 'PokeGraphResponse(id: $id, name: $name, color: $color, details: $details)';
+    return 'PokeGraphResponse(id: $id, name: $name, color: $color, details: $details, evolutions: $evolutions)';
   }
 
   @override
@@ -364,12 +396,15 @@ class _$PokeGraphResponseImpl extends _PokeGraphResponse {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.color, color) || other.color == color) &&
-            (identical(other.details, details) || other.details == details));
+            (identical(other.details, details) || other.details == details) &&
+            (identical(other.evolutions, evolutions) ||
+                other.evolutions == evolutions));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, color, details);
+  int get hashCode =>
+      Object.hash(runtimeType, id, name, color, details, evolutions);
 
   @JsonKey(ignore: true)
   @override
@@ -391,8 +426,10 @@ abstract class _PokeGraphResponse extends PokeGraphResponse {
       {@JsonKey(disallowNullValue: true) required final int id,
       @JsonKey(disallowNullValue: true) required final String name,
       @JsonKey(disallowNullValue: true) required final PokeGraphColor color,
-      @JsonKey(readValue: _readDetails)
-      required final PokeGraphDetails details}) = _$PokeGraphResponseImpl;
+      @JsonKey(disallowNullValue: true, readValue: _readDetails)
+      required final PokeGraphDetails details,
+      @JsonKey(disallowNullValue: true)
+      required final PokeGraphEvolution evolutions}) = _$PokeGraphResponseImpl;
   const _PokeGraphResponse._() : super._();
 
   factory _PokeGraphResponse.fromJson(Map<String, dynamic> json) =
@@ -408,12 +445,339 @@ abstract class _PokeGraphResponse extends PokeGraphResponse {
   @JsonKey(disallowNullValue: true)
   PokeGraphColor get color;
   @override
-  @JsonKey(readValue: _readDetails)
+  @JsonKey(disallowNullValue: true, readValue: _readDetails)
   PokeGraphDetails get details;
+  @override
+  @JsonKey(disallowNullValue: true)
+  PokeGraphEvolution get evolutions;
   @override
   @JsonKey(ignore: true)
   _$$PokeGraphResponseImplCopyWith<_$PokeGraphResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+PokeGraphEvolution _$PokeGraphEvolutionFromJson(Map<String, dynamic> json) {
+  return _PokeGraphEvolution.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PokeGraphEvolution {
+  @JsonKey(disallowNullValue: true)
+  List<PokemonFromEvolution> get pokemons => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $PokeGraphEvolutionCopyWith<PokeGraphEvolution> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PokeGraphEvolutionCopyWith<$Res> {
+  factory $PokeGraphEvolutionCopyWith(
+          PokeGraphEvolution value, $Res Function(PokeGraphEvolution) then) =
+      _$PokeGraphEvolutionCopyWithImpl<$Res, PokeGraphEvolution>;
+  @useResult
+  $Res call(
+      {@JsonKey(disallowNullValue: true) List<PokemonFromEvolution> pokemons});
+}
+
+/// @nodoc
+class _$PokeGraphEvolutionCopyWithImpl<$Res, $Val extends PokeGraphEvolution>
+    implements $PokeGraphEvolutionCopyWith<$Res> {
+  _$PokeGraphEvolutionCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pokemons = null,
+  }) {
+    return _then(_value.copyWith(
+      pokemons: null == pokemons
+          ? _value.pokemons
+          : pokemons // ignore: cast_nullable_to_non_nullable
+              as List<PokemonFromEvolution>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$PokeGraphEvolutionImplCopyWith<$Res>
+    implements $PokeGraphEvolutionCopyWith<$Res> {
+  factory _$$PokeGraphEvolutionImplCopyWith(_$PokeGraphEvolutionImpl value,
+          $Res Function(_$PokeGraphEvolutionImpl) then) =
+      __$$PokeGraphEvolutionImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(disallowNullValue: true) List<PokemonFromEvolution> pokemons});
+}
+
+/// @nodoc
+class __$$PokeGraphEvolutionImplCopyWithImpl<$Res>
+    extends _$PokeGraphEvolutionCopyWithImpl<$Res, _$PokeGraphEvolutionImpl>
+    implements _$$PokeGraphEvolutionImplCopyWith<$Res> {
+  __$$PokeGraphEvolutionImplCopyWithImpl(_$PokeGraphEvolutionImpl _value,
+      $Res Function(_$PokeGraphEvolutionImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? pokemons = null,
+  }) {
+    return _then(_$PokeGraphEvolutionImpl(
+      pokemons: null == pokemons
+          ? _value._pokemons
+          : pokemons // ignore: cast_nullable_to_non_nullable
+              as List<PokemonFromEvolution>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PokeGraphEvolutionImpl implements _PokeGraphEvolution {
+  const _$PokeGraphEvolutionImpl(
+      {@JsonKey(disallowNullValue: true)
+      required final List<PokemonFromEvolution> pokemons})
+      : _pokemons = pokemons;
+
+  factory _$PokeGraphEvolutionImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PokeGraphEvolutionImplFromJson(json);
+
+  final List<PokemonFromEvolution> _pokemons;
+  @override
+  @JsonKey(disallowNullValue: true)
+  List<PokemonFromEvolution> get pokemons {
+    if (_pokemons is EqualUnmodifiableListView) return _pokemons;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_pokemons);
+  }
+
+  @override
+  String toString() {
+    return 'PokeGraphEvolution(pokemons: $pokemons)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PokeGraphEvolutionImpl &&
+            const DeepCollectionEquality().equals(other._pokemons, _pokemons));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_pokemons));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PokeGraphEvolutionImplCopyWith<_$PokeGraphEvolutionImpl> get copyWith =>
+      __$$PokeGraphEvolutionImplCopyWithImpl<_$PokeGraphEvolutionImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PokeGraphEvolutionImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PokeGraphEvolution implements PokeGraphEvolution {
+  const factory _PokeGraphEvolution(
+          {@JsonKey(disallowNullValue: true)
+          required final List<PokemonFromEvolution> pokemons}) =
+      _$PokeGraphEvolutionImpl;
+
+  factory _PokeGraphEvolution.fromJson(Map<String, dynamic> json) =
+      _$PokeGraphEvolutionImpl.fromJson;
+
+  @override
+  @JsonKey(disallowNullValue: true)
+  List<PokemonFromEvolution> get pokemons;
+  @override
+  @JsonKey(ignore: true)
+  _$$PokeGraphEvolutionImplCopyWith<_$PokeGraphEvolutionImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+PokemonFromEvolution _$PokemonFromEvolutionFromJson(Map<String, dynamic> json) {
+  return _PokemonFromEvolution.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PokemonFromEvolution {
+  @JsonKey(disallowNullValue: true)
+  int get id => throw _privateConstructorUsedError;
+  @JsonKey(disallowNullValue: true)
+  String get name => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $PokemonFromEvolutionCopyWith<PokemonFromEvolution> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PokemonFromEvolutionCopyWith<$Res> {
+  factory $PokemonFromEvolutionCopyWith(PokemonFromEvolution value,
+          $Res Function(PokemonFromEvolution) then) =
+      _$PokemonFromEvolutionCopyWithImpl<$Res, PokemonFromEvolution>;
+  @useResult
+  $Res call(
+      {@JsonKey(disallowNullValue: true) int id,
+      @JsonKey(disallowNullValue: true) String name});
+}
+
+/// @nodoc
+class _$PokemonFromEvolutionCopyWithImpl<$Res,
+        $Val extends PokemonFromEvolution>
+    implements $PokemonFromEvolutionCopyWith<$Res> {
+  _$PokemonFromEvolutionCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$PokemonFromEvolutionImplCopyWith<$Res>
+    implements $PokemonFromEvolutionCopyWith<$Res> {
+  factory _$$PokemonFromEvolutionImplCopyWith(_$PokemonFromEvolutionImpl value,
+          $Res Function(_$PokemonFromEvolutionImpl) then) =
+      __$$PokemonFromEvolutionImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(disallowNullValue: true) int id,
+      @JsonKey(disallowNullValue: true) String name});
+}
+
+/// @nodoc
+class __$$PokemonFromEvolutionImplCopyWithImpl<$Res>
+    extends _$PokemonFromEvolutionCopyWithImpl<$Res, _$PokemonFromEvolutionImpl>
+    implements _$$PokemonFromEvolutionImplCopyWith<$Res> {
+  __$$PokemonFromEvolutionImplCopyWithImpl(_$PokemonFromEvolutionImpl _value,
+      $Res Function(_$PokemonFromEvolutionImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+  }) {
+    return _then(_$PokemonFromEvolutionImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PokemonFromEvolutionImpl implements _PokemonFromEvolution {
+  const _$PokemonFromEvolutionImpl(
+      {@JsonKey(disallowNullValue: true) required this.id,
+      @JsonKey(disallowNullValue: true) required this.name});
+
+  factory _$PokemonFromEvolutionImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PokemonFromEvolutionImplFromJson(json);
+
+  @override
+  @JsonKey(disallowNullValue: true)
+  final int id;
+  @override
+  @JsonKey(disallowNullValue: true)
+  final String name;
+
+  @override
+  String toString() {
+    return 'PokemonFromEvolution(id: $id, name: $name)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PokemonFromEvolutionImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, name);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PokemonFromEvolutionImplCopyWith<_$PokemonFromEvolutionImpl>
+      get copyWith =>
+          __$$PokemonFromEvolutionImplCopyWithImpl<_$PokemonFromEvolutionImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PokemonFromEvolutionImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PokemonFromEvolution implements PokemonFromEvolution {
+  const factory _PokemonFromEvolution(
+          {@JsonKey(disallowNullValue: true) required final int id,
+          @JsonKey(disallowNullValue: true) required final String name}) =
+      _$PokemonFromEvolutionImpl;
+
+  factory _PokemonFromEvolution.fromJson(Map<String, dynamic> json) =
+      _$PokemonFromEvolutionImpl.fromJson;
+
+  @override
+  @JsonKey(disallowNullValue: true)
+  int get id;
+  @override
+  @JsonKey(disallowNullValue: true)
+  String get name;
+  @override
+  @JsonKey(ignore: true)
+  _$$PokemonFromEvolutionImplCopyWith<_$PokemonFromEvolutionImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 PokeGraphColor _$PokeGraphColorFromJson(Map<String, dynamic> json) {

@@ -263,7 +263,7 @@ class _PokemonTile extends StatelessObserverWidget {
         visualDensity: const VisualDensity(vertical: 2.0),
         shape: RoundedRectangleBorder(
           borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-          side: BorderSide(color: scheme.onSurface),
+          side: BorderSide(color: scheme.outlineVariant),
         ),
         leading: Hero(
           tag: pokemon.id,

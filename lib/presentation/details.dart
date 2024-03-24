@@ -15,6 +15,7 @@ import 'package:poke_app/domain/pokemon/model/pokemon.dart';
 import 'package:poke_app/presentation/model/detail_base_info.dart';
 import 'package:poke_app/presentation/widget/bloc_sliver.dart';
 import 'package:poke_app/presentation/widget/error_header.dart';
+import 'package:poke_app/presentation/widget/evolution_card.dart';
 import 'package:poke_app/presentation/widget/favorite_icon_button.dart';
 import 'package:poke_app/presentation/widget/page_indicator.dart';
 import 'package:poke_app/presentation/widget/pokeball_loader.dart';
@@ -137,6 +138,10 @@ class PokemonDetailsScreen extends HookWidget {
               ),
               const SliverToBoxAdapter(child: gap8),
               _TypesWidget(types: data.types),
+              if (data.evolution.isNotEmpty) ...[
+                const SliverToBoxAdapter(child: gap8),
+                _EvolutionCards(evolutions: data.evolution),
+              ],
               const SliverToBoxAdapter(child: gap8),
               _StatsSiLiver(stats: data.stats),
               const SliverToBoxAdapter(child: gap8),
@@ -144,7 +149,7 @@ class PokemonDetailsScreen extends HookWidget {
               const SliverToBoxAdapter(child: gap8),
               SliverSafeArea(
                 top: false,
-                sliver: _MovesSiLiver(moves: data.movements),
+                sliver: _MovesSliver(moves: data.movements),
               ),
             ];
           } else {
@@ -235,6 +240,36 @@ class PokemonDetailsScreen extends HookWidget {
         ),
       ],
       child: child,
+    );
+  }
+}
+
+class _EvolutionCards extends HookWidget {
+  final List<PokemonEvolution> evolutions;
+
+  // ignore: unused_element
+  const _EvolutionCards({super.key, required this.evolutions});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+      sliver: BlockSliver(
+        title: 'Evolutions',
+        sliver: SliverPadding(
+          padding: const EdgeInsets.all(12.0),
+          sliver: SliverGrid.builder(
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 120,
+              childAspectRatio: 0.8,
+              crossAxisSpacing: 0.0,
+              mainAxisSpacing: 0.0,
+            ),
+            itemBuilder: (context, index) => EvolutionCard(pokemon: evolutions[index]),
+            itemCount: evolutions.length,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -451,11 +486,11 @@ class _DetailPokemonCard extends StatelessWidget {
     return SliverToBoxAdapter(
       child: Card(
         elevation: 0.0,
-        color: theme.colorScheme.secondaryContainer.withOpacity(0.36),
+        color: theme.colorScheme.primaryContainer.withOpacity(0.36),
         shape: RoundedRectangleBorder(
           borderRadius: const BorderRadius.all(Radius.circular(16.0)),
           side: BorderSide(
-            color: theme.colorScheme.secondary,
+            color: theme.colorScheme.primary,
             width: 1.5,
           ),
         ),
@@ -581,7 +616,7 @@ class _StatsSiLiver extends HookWidget {
   }
 }
 
-class _AbilitiesSiLiver extends HookWidget {
+class _AbilitiesSiLiver extends StatelessWidget {
   final List<Ability> abilities;
 
   // ignore: unused_element
@@ -628,11 +663,11 @@ class _AbilitiesSiLiver extends HookWidget {
   }
 }
 
-class _MovesSiLiver extends HookWidget {
+class _MovesSliver extends StatelessWidget {
   final List<Move> moves;
 
   // ignore: unused_element
-  const _MovesSiLiver({super.key, required this.moves});
+  const _MovesSliver({super.key, required this.moves});
 
   @override
   Widget build(BuildContext context) {

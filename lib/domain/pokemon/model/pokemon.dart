@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:poke_app/domain/pokemon/model/sprite.dart';
+import 'package:poke_app/domain/pokemon/model/pokemon_shallow.dart';
 
 part 'pokemon.freezed.dart';
 part 'pokemon.g.dart';
@@ -23,6 +24,7 @@ class Pokemon with _$Pokemon {
     @Default([]) final List<Move> movements,
     @Default([]) final List<Stat> stats,
     @Default([]) final List<PokemonType> types,
+    @Default([]) final List<PokemonEvolution> evolution,
   }) = _Pokemon;
 	
   factory Pokemon.fromJson(Map<String, dynamic> json) =>

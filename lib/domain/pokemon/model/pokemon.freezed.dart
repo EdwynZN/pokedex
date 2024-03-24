@@ -36,6 +36,7 @@ mixin _$Pokemon {
   List<Move> get movements => throw _privateConstructorUsedError;
   List<Stat> get stats => throw _privateConstructorUsedError;
   List<PokemonType> get types => throw _privateConstructorUsedError;
+  List<PokemonEvolution> get evolution => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -63,7 +64,8 @@ abstract class $PokemonCopyWith<$Res> {
       List<Ability> abilities,
       List<Move> movements,
       List<Stat> stats,
-      List<PokemonType> types});
+      List<PokemonType> types,
+      List<PokemonEvolution> evolution});
 
   $SpriteCopyWith<$Res> get sprite;
   $SpriteCopyWith<$Res>? get femaleSprite;
@@ -100,6 +102,7 @@ class _$PokemonCopyWithImpl<$Res, $Val extends Pokemon>
     Object? movements = null,
     Object? stats = null,
     Object? types = null,
+    Object? evolution = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -166,6 +169,10 @@ class _$PokemonCopyWithImpl<$Res, $Val extends Pokemon>
           ? _value.types
           : types // ignore: cast_nullable_to_non_nullable
               as List<PokemonType>,
+      evolution: null == evolution
+          ? _value.evolution
+          : evolution // ignore: cast_nullable_to_non_nullable
+              as List<PokemonEvolution>,
     ) as $Val);
   }
 
@@ -237,7 +244,8 @@ abstract class _$$PokemonImplCopyWith<$Res> implements $PokemonCopyWith<$Res> {
       List<Ability> abilities,
       List<Move> movements,
       List<Stat> stats,
-      List<PokemonType> types});
+      List<PokemonType> types,
+      List<PokemonEvolution> evolution});
 
   @override
   $SpriteCopyWith<$Res> get sprite;
@@ -276,6 +284,7 @@ class __$$PokemonImplCopyWithImpl<$Res>
     Object? movements = null,
     Object? stats = null,
     Object? types = null,
+    Object? evolution = null,
   }) {
     return _then(_$PokemonImpl(
       id: null == id
@@ -342,6 +351,10 @@ class __$$PokemonImplCopyWithImpl<$Res>
           ? _value._types
           : types // ignore: cast_nullable_to_non_nullable
               as List<PokemonType>,
+      evolution: null == evolution
+          ? _value._evolution
+          : evolution // ignore: cast_nullable_to_non_nullable
+              as List<PokemonEvolution>,
     ));
   }
 }
@@ -365,11 +378,13 @@ class _$PokemonImpl implements _Pokemon {
       final List<Ability> abilities = const [],
       final List<Move> movements = const [],
       final List<Stat> stats = const [],
-      final List<PokemonType> types = const []})
+      final List<PokemonType> types = const [],
+      final List<PokemonEvolution> evolution = const []})
       : _abilities = abilities,
         _movements = movements,
         _stats = stats,
-        _types = types;
+        _types = types,
+        _evolution = evolution;
 
   factory _$PokemonImpl.fromJson(Map<String, dynamic> json) =>
       _$$PokemonImplFromJson(json);
@@ -434,9 +449,18 @@ class _$PokemonImpl implements _Pokemon {
     return EqualUnmodifiableListView(_types);
   }
 
+  final List<PokemonEvolution> _evolution;
+  @override
+  @JsonKey()
+  List<PokemonEvolution> get evolution {
+    if (_evolution is EqualUnmodifiableListView) return _evolution;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_evolution);
+  }
+
   @override
   String toString() {
-    return 'Pokemon(id: $id, name: $name, height: $height, weight: $weight, baseExperience: $baseExperience, image: $image, sprite: $sprite, color: $color, isFavorite: $isFavorite, femaleSprite: $femaleSprite, shinySprite: $shinySprite, shinyFemaleSprite: $shinyFemaleSprite, abilities: $abilities, movements: $movements, stats: $stats, types: $types)';
+    return 'Pokemon(id: $id, name: $name, height: $height, weight: $weight, baseExperience: $baseExperience, image: $image, sprite: $sprite, color: $color, isFavorite: $isFavorite, femaleSprite: $femaleSprite, shinySprite: $shinySprite, shinyFemaleSprite: $shinyFemaleSprite, abilities: $abilities, movements: $movements, stats: $stats, types: $types, evolution: $evolution)';
   }
 
   @override
@@ -466,7 +490,9 @@ class _$PokemonImpl implements _Pokemon {
             const DeepCollectionEquality()
                 .equals(other._movements, _movements) &&
             const DeepCollectionEquality().equals(other._stats, _stats) &&
-            const DeepCollectionEquality().equals(other._types, _types));
+            const DeepCollectionEquality().equals(other._types, _types) &&
+            const DeepCollectionEquality()
+                .equals(other._evolution, _evolution));
   }
 
   @JsonKey(ignore: true)
@@ -488,7 +514,8 @@ class _$PokemonImpl implements _Pokemon {
       const DeepCollectionEquality().hash(_abilities),
       const DeepCollectionEquality().hash(_movements),
       const DeepCollectionEquality().hash(_stats),
-      const DeepCollectionEquality().hash(_types));
+      const DeepCollectionEquality().hash(_types),
+      const DeepCollectionEquality().hash(_evolution));
 
   @JsonKey(ignore: true)
   @override
@@ -521,7 +548,8 @@ abstract class _Pokemon implements Pokemon {
       final List<Ability> abilities,
       final List<Move> movements,
       final List<Stat> stats,
-      final List<PokemonType> types}) = _$PokemonImpl;
+      final List<PokemonType> types,
+      final List<PokemonEvolution> evolution}) = _$PokemonImpl;
 
   factory _Pokemon.fromJson(Map<String, dynamic> json) = _$PokemonImpl.fromJson;
 
@@ -557,6 +585,8 @@ abstract class _Pokemon implements Pokemon {
   List<Stat> get stats;
   @override
   List<PokemonType> get types;
+  @override
+  List<PokemonEvolution> get evolution;
   @override
   @JsonKey(ignore: true)
   _$$PokemonImplCopyWith<_$PokemonImpl> get copyWith =>

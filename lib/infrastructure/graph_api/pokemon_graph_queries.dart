@@ -125,6 +125,17 @@ query singlePokemonQuery($id: Int!) {
     color: pokemon_v2_pokemoncolor {
       value: name
     }
+    evolutions: pokemon_v2_evolutionchain {
+      pokemons: pokemon_v2_pokemonspecies(
+        where: {
+          _not: {id: {_eq: $id}},
+          _and: {generation_id: {_in: [1]}}
+        }
+      ) {
+        name
+        id
+      }
+    }
   }
 }
 ''';

@@ -51,12 +51,21 @@ final class PokemonGraphRepository
   Future<Either<DomainFailure, Pokemon>> getDetail({required int id}) async {
     try {
       final response = await api.getPokemonDetail(id);
-      final localResponse = await oBSource.getAllByID([id]);
+      final List<int> ids = [
+        response.id,
+        ...response.evolutions.pokemons.map((p) => p.id),
+      ];
+      final localResponse = await oBSource.getAllByID(ids);
       bool isFavorite = false;
+      Map<int, bool> pokemons = {};
       if (localResponse.isNotEmpty) {
-        isFavorite = localResponse.single.isFavorite;
+        pokemons = Map.fromEntries(
+          localResponse.map((e) => MapEntry(e.id, e.isFavorite)),
+        );
+        //isFavorite = localResponse.single.isFavorite;
+        isFavorite = pokemons.remove(response.id) ?? isFavorite;
       }
-      return Right(response.toDomain(isFavorite));
+      return Right(response.toDomain(isFavorite, pokemons));
     } on OperationException catch (e) {
       recordError(
         e,

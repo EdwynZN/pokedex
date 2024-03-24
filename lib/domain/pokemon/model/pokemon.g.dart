@@ -42,6 +42,10 @@ _$PokemonImpl _$$PokemonImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => PokemonType.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      evolution: (json['evolution'] as List<dynamic>?)
+              ?.map((e) => PokemonEvolution.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$$PokemonImplToJson(_$PokemonImpl instance) {
@@ -70,6 +74,7 @@ Map<String, dynamic> _$$PokemonImplToJson(_$PokemonImpl instance) {
   val['movements'] = instance.movements.map((e) => e.toJson()).toList();
   val['stats'] = instance.stats.map((e) => e.toJson()).toList();
   val['types'] = instance.types.map((e) => e.toJson()).toList();
+  val['evolution'] = instance.evolution.map((e) => e.toJson()).toList();
   return val;
 }
 
