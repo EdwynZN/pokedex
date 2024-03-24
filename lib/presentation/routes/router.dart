@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:poke_app/domain/pokemon/model/pokemon_shallow.dart';
 import 'package:poke_app/presentation/controller/pokemon_details_store.dart';
 import 'package:poke_app/domain/pokemon/repository.dart';
 import 'package:poke_app/presentation/routes/routes_constants.dart';
@@ -48,7 +49,11 @@ GoRouter createRouter({
                 id: int.parse(state.pathParameters['id']!),
                 repository: context.read<PokemonRepository>(),
               ),
-              child: const PokemonDetailsScreen(),
+              child: PokemonDetailsScreen(
+                pokemon: state.extra is PokemonShallow? 
+                  ? state.extra as PokemonShallow? 
+                  : null,
+              ),
             )
           ),
         ],

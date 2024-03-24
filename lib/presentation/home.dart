@@ -317,6 +317,7 @@ class _PokemonTile extends StatelessObserverWidget {
         onTap: () => context.pushNamed(
           'pokemon_details',
           pathParameters: {'id': pokemon.id.toString()},
+          extra: pokemon,
         ),
       ),
     );

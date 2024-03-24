@@ -7,10 +7,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobx/mobx.dart';
 import 'package:poke_app/assets/pokemon_icons.dart';
+import 'package:poke_app/domain/pokemon/model/pokemon_shallow.dart';
 import 'package:poke_app/presentation/controller/pokedex_store.dart';
 import 'package:poke_app/presentation/controller/pokemon_details_store.dart';
 import 'package:poke_app/domain/failure.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon.dart';
+import 'package:poke_app/presentation/model/detail_base_info.dart';
 import 'package:poke_app/presentation/widget/bloc_sliver.dart';
 import 'package:poke_app/presentation/widget/error_header.dart';
 import 'package:poke_app/presentation/widget/favorite_icon_button.dart';
@@ -23,7 +25,9 @@ import 'package:poke_app/utils/theme.dart';
 import 'package:provider/provider.dart';
 
 class PokemonDetailsScreen extends HookWidget {
-  const PokemonDetailsScreen({super.key});
+  final PokemonShallow? pokemon;
+
+  const PokemonDetailsScreen({super.key, this.pokemon});
 
   @override
   Widget build(BuildContext context) {
@@ -80,8 +84,12 @@ class PokemonDetailsScreen extends HookWidget {
           final detail = context.watch<PokemonDetailStore>();
           final List<Widget> list;
           if (detail.isLoading) {
-            list = const [
-              SliverToBoxAdapter(child: PokeballLoader()),
+            list = [
+              if (pokemon != null) ...[
+                _DetailPokemonCard.fromPokemonShallow(pokemon: pokemon!),
+                const SliverToBoxAdapter(child: gap8),
+              ],
+              const SliverToBoxAdapter(child: PokeballLoader()),
             ];
           } else if (detail.error != null) {
             final error = detail.error!;
@@ -105,9 +113,11 @@ class PokemonDetailsScreen extends HookWidget {
                 id: data.id,
                 name: data.name,
                 image: data.image,
-                pokemnoHeight: data.height,
-                pokemnoWeight: data.weight,
-                xp: data.baseExperience,
+                detailBaseInfo: DetailBaseInfo(
+                  pokemonHeight: data.height,
+                  pokemonWeight: data.weight,
+                  xp: data.baseExperience,
+                ),
                 sprites: [
                   data.sprite.front,
                   data.sprite.back,
@@ -280,9 +290,7 @@ class _DetailPokemonCard extends StatelessWidget {
   final String name;
   final List<String> sprites;
   final String image;
-  final int pokemnoHeight;
-  final int pokemnoWeight;
-  final int xp;
+  final DetailBaseInfo? detailBaseInfo;
 
   const _DetailPokemonCard({
     // ignore: unused_element
@@ -291,10 +299,18 @@ class _DetailPokemonCard extends StatelessWidget {
     required this.id,
     required this.name,
     required this.image,
-    required this.pokemnoHeight,
-    required this.pokemnoWeight,
-    required this.xp,
+    required this.detailBaseInfo,
   });
+
+  _DetailPokemonCard.fromPokemonShallow({
+    // ignore: unused_element
+    super.key,
+    required PokemonShallow pokemon,
+  })  : id = pokemon.id,
+        name = pokemon.name,
+        image = pokemon.image,
+        sprites = const [],
+        detailBaseInfo = null;
 
   @override
   Widget build(BuildContext context) {
@@ -315,22 +331,20 @@ class _DetailPokemonCard extends StatelessWidget {
             ),
             highlightColor: Colors.transparent,
             splashColor: color.withOpacity(0.12),
-            onTap: () async {
-              await showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                isDismissible: true,
-                elevation: 4.0,
-                enableDrag: true,
-                constraints: const BoxConstraints.tightFor(
-                  height: 400.0,
-                ),
-                showDragHandle: true,
-                builder: (_) => _ImageGallerySheet(
-                  images: sprites,
-                ),
-              );
-            },
+            onTap: sprites.isEmpty
+                ? null
+                : () async {
+                    await showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      isDismissible: true,
+                      elevation: 4.0,
+                      enableDrag: true,
+                      constraints: const BoxConstraints.tightFor(height: 400.0),
+                      showDragHandle: true,
+                      builder: (_) => _ImageGallerySheet(images: sprites),
+                    );
+                  },
             child: Hero(
               transitionOnUserGestures: true,
               tag: id,
@@ -354,6 +368,36 @@ class _DetailPokemonCard extends StatelessWidget {
       ),
     );
 
+    final infoCard = detailBaseInfo == null
+        ? SizedBox.fromSize(
+            size: const Size.fromHeight(120),
+          )
+        : Card(
+            elevation: 1.0,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  _RowTable(
+                    title: 'Height',
+                    detail: '${detailBaseInfo!.pokemonHeight * 10} cm',
+                  ),
+                  const Divider(height: 16.0),
+                  _RowTable(
+                    title: 'Weight',
+                    detail: '${detailBaseInfo!.pokemonWeight / 10} kg',
+                  ),
+                  const Divider(height: 16.0),
+                  _RowTable(
+                    title: 'Base XP',
+                    detail: '${detailBaseInfo!.pokemonHeight * 10} xp',
+                  ),
+                ],
+              ),
+            ),
+          );
+
     final Widget info = Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
@@ -371,30 +415,19 @@ class _DetailPokemonCard extends StatelessWidget {
         gap8,
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 250),
-          child: Card(
-            elevation: 1.0,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  _RowTable(
-                    title: 'Height',
-                    detail: '${pokemnoHeight * 10} cm',
-                  ),
-                  const Divider(height: 16.0),
-                  _RowTable(
-                    title: 'Weight',
-                    detail: '${pokemnoWeight / 10} kg',
-                  ),
-                  const Divider(height: 16.0),
-                  _RowTable(
-                    title: 'Base XP',
-                    detail: '${pokemnoHeight * 10} xp',
-                  ),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 650),
+            switchInCurve: const Cubic(0.3, 0.0, 0.8, 0.15),
+            layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
+              return Stack(
+                alignment: Alignment.topCenter,
+                children: <Widget>[
+                  ...previousChildren,
+                  if (currentChild != null) currentChild,
                 ],
-              ),
-            ),
+              );
+            },
+            child: infoCard,
           ),
         ),
       ],
