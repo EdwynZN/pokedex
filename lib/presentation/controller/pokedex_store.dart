@@ -3,18 +3,21 @@ import 'package:poke_app/domain/pokemon/model/pokemon.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon_filter.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon_shallow.dart';
 import 'package:poke_app/domain/pokemon/repository.dart';
+import 'package:poke_app/utils/analytics.dart';
 
 part 'pokedex_store.g.dart';
 
 class PokedexStore = _PokedexStore with _$PokedexStore;
 
 abstract class _PokedexStore with Store {
+  final Analytics _analytics;
   final int _pageSize = 60;
   final PokemonRepository _repository;
   late ReactionDisposer _disposer;
 
   _PokedexStore(
     this._repository,
+    this._analytics,
   ) {
     _disposer = when(
       (_) => !_isLoading && !hasError && pokemons.length < _pageSize,
@@ -121,6 +124,7 @@ abstract class _PokedexStore with Store {
     if (searchQuery == _pokemonSearch) {
       return;
     }
+    _analytics.logSearch(searchQuery);
     _pokemonSearch = searchQuery;
     _refresh(true);
   }

@@ -35,27 +35,26 @@ GoRouter createRouter({
         builder: (_, __) => const PokemonHome(),
         routes: [
           GoRoute(
-            name: 'pokemon_details',
-            path: '$detailsRoute/:id',
-            redirect: (context, state) {
-              final id = state.pathParameters['id'];
-              if (id == null || int.tryParse(id) == null) {
-                return homeRoute;
-              }
-              return null;
-            },
-            builder: (_, state) => Provider(
-              create: (context) => PokemonDetailStore(
-                id: int.parse(state.pathParameters['id']!),
-                repository: context.read<PokemonRepository>(),
-              ),
-              child: PokemonDetailsScreen(
-                pokemon: state.extra is PokemonShallow? 
-                  ? state.extra as PokemonShallow? 
-                  : null,
-              ),
-            )
-          ),
+              name: 'pokemon_details',
+              path: '$detailsRoute/:id',
+              redirect: (context, state) {
+                final id = state.pathParameters['id'];
+                if (id == null || int.tryParse(id) == null) {
+                  return homeRoute;
+                }
+                return null;
+              },
+              builder: (_, state) => Provider(
+                    create: (context) => PokemonDetailStore(
+                      id: int.parse(state.pathParameters['id']!),
+                      repository: context.read<PokemonRepository>(),
+                    ),
+                    child: PokemonDetailsScreen(
+                      pokemon: state.extra is PokemonShallow?
+                          ? state.extra as PokemonShallow?
+                          : null,
+                    ),
+                  )),
         ],
       ),
     ],

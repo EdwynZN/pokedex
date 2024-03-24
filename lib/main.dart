@@ -21,6 +21,7 @@ import 'package:poke_app/domain/pokemon/repository.dart';
 import 'package:poke_app/firebase_options.dart';
 import 'package:poke_app/infrastructure/graph_api/poke_graph_api.dart';
 import 'package:poke_app/presentation/routes/router.dart';
+import 'package:poke_app/utils/analytics.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -58,8 +59,15 @@ void main() {
             store: context.read<ObjectBox>().store,
           ),
         ),
+        Provider<Analytics>(
+          create: (_) => kDebugMode ? const Analytics.debug() : Analytics(),
+        ),
         Provider<ThemeStore>(create: (_) => ThemeStore()),
-        Provider<GoRouter>(create: (_) => createRouter()),
+        Provider<GoRouter>(
+          create: (context) => createRouter(
+            observers: [context.read<Analytics>().navigatorObserver]
+          ),
+        ),
         Provider<PokeGraphApi>(
           create: (_) => PokeGraphApi(
             GraphQLClient(
@@ -102,6 +110,7 @@ void main() {
         Provider<PokedexStore>(
           create: (context) => PokedexStore(
             context.read<PokemonRepository>(),
+            context.read<Analytics>(),
           ),
           dispose: (context, store) => store.dispose(),
         ),
