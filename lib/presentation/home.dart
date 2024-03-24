@@ -73,15 +73,40 @@ class PokemonHome extends HookWidget {
     final pokemonStore = context.watch<PokedexStore>();
     useSearch(textController, pokemonStore);
     _usePagination(paging: pokemonStore, controller: controller);
-    return ReactionBuilder(
-      builder: (context) {
-        final pokemonStore = context.read<PokedexStore>();
-        final filterStore = context.read<FilterStore>();
-        return reaction(
-          (_) => filterStore.selectedFilter,
-          pokemonStore.changeFilter,
-        );
+    final hideFAB = useListenableSelector(
+      controller,
+      () {
+        if (!controller.hasClients) {
+          return true;
+        }
+        final position = controller.position;
+        return position.extentBefore <= (position.viewportDimension / 2);
       },
+    );
+    return MultiReactionBuilder(
+      key: const ValueKey('FilterMultiReactionBuilder'),
+      builders: [
+        ReactionBuilder(
+          builder: (context) {
+            final pokemonStore = context.read<PokedexStore>();
+            final filterStore = context.read<FilterStore>();
+            return reaction(
+              (_) => filterStore.onlyFavorites,
+              pokemonStore.changeFavoritesFilter,
+            );
+          },
+        ),
+        ReactionBuilder(
+          builder: (context) {
+            final pokemonStore = context.read<PokedexStore>();
+            final filterStore = context.read<FilterStore>();
+            return reaction(
+              (_) => filterStore.selectedFilter,
+              pokemonStore.changeFilter,
+            );
+          },
+        ),
+      ],
       child: Scaffold(
         appBar: SearchAppbar(
           textController: textController,
@@ -94,7 +119,7 @@ class PokemonHome extends HookWidget {
           ),
         ),
         body: _PokemonListView(scrollController: controller),
-        floatingActionButton: Observer(
+        floatingActionButton: hideFAB ? null : Observer(
           builder: (context) {
             return context.watch<PokedexStore>().pokemons.isEmpty
                 ? const SizedBox()
@@ -149,16 +174,6 @@ class _PokemonListView extends StatelessObserverWidget {
         controller: scrollController,
         padding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 0.0),
         itemBuilder: (context, index) {
-          /* if (store.isLoading) {
-            index--;
-            if (index == -1) {
-              return const Padding(
-                padding: EdgeInsets.only(bottom: 8),
-                child: LinearProgressIndicator(minHeight: 8.0),
-              );
-            }
-          } */
-
           if (isValid && index < pokemons.length) {
             return _PokemonTile(pokemonStore: pokemons[index]);
           } else if (index == pokemons.length) {

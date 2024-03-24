@@ -8,11 +8,18 @@ class PokemonOBSource {
     required ob.Store store,
   }) : _box = store.box<ObLocalPokemon>();
 
-  Future<List<ObLocalPokemon>> getFavorites() async {
+  Future<List<ObLocalPokemon>> getFavorites({
+    int offset = 0,
+    int? limit,
+  }) async {
     final query = _box
         .query(ob.ObLocalPokemon_.isFavorite.equals(true))
         .order(ob.ObLocalPokemon_.id)
         .build();
+    query.offset = offset;
+    if (limit != null) {
+      query.limit = limit;
+    }
     return query.find();
   }
 

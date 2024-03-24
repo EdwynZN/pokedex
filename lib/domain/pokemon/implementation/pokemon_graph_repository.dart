@@ -15,7 +15,8 @@ import 'package:collection/collection.dart';
 
 typedef _PokemonShallowResponses = ({
   List<PokeGraphShallowResponse> api,
-  List<ObLocalPokemon> local
+  List<ObLocalPokemon> local,
+  bool onlyFavorites
 });
 
 List<PokemonShallow> _filterPokemons(_PokemonShallowResponses responses) {
@@ -25,6 +26,9 @@ List<PokemonShallow> _filterPokemons(_PokemonShallowResponses responses) {
             .firstWhereOrNull((element) => element.id == pokemon.id)
             ?.isFavorite ??
         false;
+    if (responses.onlyFavorites && !isFavorite) {
+      continue;
+    }
     pokemons.add(PokemonShallow(
       id: pokemon.id,
       name: pokemon.name,
@@ -77,23 +81,45 @@ final class PokemonGraphRepository
     int limit = 60,
     PokemonFilter filter = const PokemonFilter(),
     String? query,
+    bool onlyFavorites = false,
   }) async {
     try {
-      final apiResponse = await api.getPokemons(
-        offset: offset,
-        limit: limit,
-        generationsID: filter.generations.map((e) => e.id).toList(),
-        typesID: filter.types.map((e) => e.id).toList(),
-        colorsID: filter.colors.map((e) => e.id).toList(),
-        search: query,
-      );
-      final favResponse = await oBSource.getAllByID(
-        apiResponse.map((e) => e.id).toList(),
-      );
-
+      final List<PokemonShallow> pokemons;
+      final List<PokeGraphShallowResponse> apiResponse;
+      final List<ObLocalPokemon> favResponse;
+      if (onlyFavorites) {
+        favResponse = await oBSource.getFavorites(
+          offset: offset,
+          limit: limit,
+        );
+        if (favResponse.isEmpty) {
+          return const Right([]);
+        }
+        apiResponse = await api.getPokemons(
+          offset: offset,
+          limit: limit,
+          generationsID: filter.generations.map((e) => e.id).toList(),
+          typesID: filter.types.map((e) => e.id).toList(),
+          colorsID: filter.colors.map((e) => e.id).toList(),
+          search: query,
+          between: (min: favResponse.first.id, max: favResponse.last.id),
+        );
+      } else {
+        apiResponse = await api.getPokemons(
+          offset: offset,
+          limit: limit,
+          generationsID: filter.generations.map((e) => e.id).toList(),
+          typesID: filter.types.map((e) => e.id).toList(),
+          colorsID: filter.colors.map((e) => e.id).toList(),
+          search: query,
+        );
+        favResponse = await oBSource.getAllByID(
+          apiResponse.map((e) => e.id).toList(),
+        );
+      }
       final _PokemonShallowResponses responses =
-          (api: apiResponse, local: favResponse);
-      final pokemons = await compute(_filterPokemons, responses);
+          (api: apiResponse, local: favResponse, onlyFavorites: onlyFavorites);
+      pokemons = await compute(_filterPokemons, responses);
       return Right(pokemons);
     } on OperationException catch (e) {
       recordError(

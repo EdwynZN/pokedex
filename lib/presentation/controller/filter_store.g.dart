@@ -85,8 +85,37 @@ mixin _$FilterStore on _FilterStore, Store {
     });
   }
 
+  late final _$_onlyFavoritesAtom =
+      Atom(name: '_FilterStore._onlyFavorites', context: context);
+
+  bool get onlyFavorites {
+    _$_onlyFavoritesAtom.reportRead();
+    return super._onlyFavorites;
+  }
+
+  @override
+  bool get _onlyFavorites => onlyFavorites;
+
+  @override
+  set _onlyFavorites(bool value) {
+    _$_onlyFavoritesAtom.reportWrite(value, super._onlyFavorites, () {
+      super._onlyFavorites = value;
+    });
+  }
+
   late final _$_FilterStoreActionController =
       ActionController(name: '_FilterStore', context: context);
+
+  @override
+  void toggleFavoritesFilter() {
+    final _$actionInfo = _$_FilterStoreActionController.startAction(
+        name: '_FilterStore.toggleFavoritesFilter');
+    try {
+      return super.toggleFavoritesFilter();
+    } finally {
+      _$_FilterStoreActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void updateTypes(Set<PokemonAttribute> types) {

@@ -16,6 +16,7 @@ class PokeGraphApi {
     required List<int> typesID,
     required List<int> colorsID,
     String? search,
+    ({int min, int max})? between,
   }) async {
     final searchExists = search != null && search.isNotEmpty;
     final query = pokemonsQueryWithFilters(

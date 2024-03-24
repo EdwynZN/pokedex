@@ -10,6 +10,7 @@ abstract interface class PokemonRepository {
     int limit = 60,
     PokemonFilter filter = const PokemonFilter(),
     String? query,
+    bool onlyFavorites,
   });
 
   Future<Either<DomainFailure, Pokemon>> getDetail({required int id});

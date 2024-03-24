@@ -36,6 +36,9 @@ abstract class _FilterStore with Store {
   @readonly
   PokemonFilter _selectedFilter = const PokemonFilter();
 
+  @readonly
+  bool _onlyFavorites = false;
+
   @computed
   bool get isLoading => _future.status == FutureStatus.pending;
 
@@ -53,6 +56,11 @@ abstract class _FilterStore with Store {
 
   @computed
   bool get hasFilterGeneration => _selectedFilter.generations.isNotEmpty;
+
+  @action
+  void toggleFavoritesFilter() {
+    _onlyFavorites = !_onlyFavorites;
+  }
 
   @action
   void updateTypes(Set<PokemonAttribute> types) {

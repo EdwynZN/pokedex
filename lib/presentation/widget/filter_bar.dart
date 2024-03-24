@@ -124,6 +124,15 @@ class _FilterRow extends StatelessObserverWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         InputChip(
+          showCheckmark: true,
+          selected: store.onlyFavorites,
+          label: const Text('Favorites'),
+          onPressed: isDisable
+              ? null
+              : store.toggleFavoritesFilter,
+        ),
+        gap12,
+        InputChip(
           showCheckmark: false,
           selected: store.hasFilterType,
           avatar: const Icon(Icons.arrow_drop_down),

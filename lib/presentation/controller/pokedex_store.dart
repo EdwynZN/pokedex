@@ -26,6 +26,7 @@ abstract class _PokedexStore with Store {
   }
 
   PokemonFilter _filter = const PokemonFilter();
+  bool _onlyFavorites = false;
   String _pokemonSearch = '';
 
   final ObservableList<SinglePokemonStore> _pokemons =
@@ -75,6 +76,7 @@ abstract class _PokedexStore with Store {
       limit: _pageSize,
       filter: _filter,
       query: _pokemonSearch,
+      onlyFavorites: _onlyFavorites,
     );
     return fetch.fold((l) => throw l, (r) => r);
   }
@@ -100,7 +102,18 @@ abstract class _PokedexStore with Store {
   }
 
   Future<void> changeFilter(PokemonFilter filter) async {
+    if (_filter == filter) {
+      return;
+    }
     _filter = filter;
+    _refresh(true);
+  }
+
+  Future<void> changeFavoritesFilter(bool onlyFavorites) async {
+    if (_onlyFavorites == onlyFavorites) {
+      return;
+    }
+    _onlyFavorites = onlyFavorites;
     _refresh(true);
   }
 
