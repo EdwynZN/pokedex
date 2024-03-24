@@ -34,6 +34,49 @@ mixin _$PokemonDetailStore on _PokemonDetailStore, Store {
       (_$isLoadingComputed ??= Computed<bool>(() => super.isLoading,
               name: '_PokemonDetailStore.isLoading'))
           .value;
+  Computed<bool>? _$isFavLoadingComputed;
+
+  @override
+  bool get isFavLoading =>
+      (_$isFavLoadingComputed ??= Computed<bool>(() => super.isFavLoading,
+              name: '_PokemonDetailStore.isFavLoading'))
+          .value;
+  Computed<Object?>? _$favErrorComputed;
+
+  @override
+  Object? get favError =>
+      (_$favErrorComputed ??= Computed<Object?>(() => super.favError,
+              name: '_PokemonDetailStore.favError'))
+          .value;
+
+  late final _$_futureAtom =
+      Atom(name: '_PokemonDetailStore._future', context: context);
+
+  @override
+  ObservableFuture<Either<DomainFailure, Pokemon>> get _future {
+    _$_futureAtom.reportRead();
+    return super._future;
+  }
+
+  bool __futureIsInitialized = false;
+
+  @override
+  set _future(ObservableFuture<Either<DomainFailure, Pokemon>> value) {
+    _$_futureAtom
+        .reportWrite(value, __futureIsInitialized ? super._future : null, () {
+      super._future = value;
+      __futureIsInitialized = true;
+    });
+  }
+
+  late final _$changeFavoriteAsyncAction =
+      AsyncAction('_PokemonDetailStore.changeFavorite', context: context);
+
+  @override
+  Future<void> changeFavorite(bool favorite) {
+    return _$changeFavoriteAsyncAction
+        .run(() => super.changeFavorite(favorite));
+  }
 
   late final _$_PokemonDetailStoreActionController =
       ActionController(name: '_PokemonDetailStore', context: context);
@@ -55,7 +98,9 @@ mixin _$PokemonDetailStore on _PokemonDetailStore, Store {
 error: ${error},
 data: ${data},
 name: ${name},
-isLoading: ${isLoading}
+isLoading: ${isLoading},
+isFavLoading: ${isFavLoading},
+favError: ${favError}
     ''';
   }
 }

@@ -7,11 +7,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobx/mobx.dart';
 import 'package:poke_app/assets/pokemon_icons.dart';
+import 'package:poke_app/presentation/controller/pokedex_store.dart';
 import 'package:poke_app/presentation/controller/pokemon_details_store.dart';
 import 'package:poke_app/domain/failure.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon.dart';
 import 'package:poke_app/presentation/widget/bloc_sliver.dart';
 import 'package:poke_app/presentation/widget/error_header.dart';
+import 'package:poke_app/presentation/widget/favorite_icon_button.dart';
 import 'package:poke_app/presentation/widget/page_indicator.dart';
 import 'package:poke_app/presentation/widget/pokeball_loader.dart';
 import 'package:poke_app/presentation/widget/type_chip.dart';
@@ -52,13 +54,34 @@ class PokemonDetailsScreen extends HookWidget {
             return Text(name);
           },
         ),
+        actions: [
+          Observer(
+            builder: (context) {
+              final detail = context.watch<PokemonDetailStore>();
+              final bool shouldIgnore = [
+                detail.isLoading,
+                detail.error != null,
+                detail.isFavLoading,
+              ].any((element) => element);
+              final isFavorite = detail.data?.isFavorite ?? false;
+              return FavoriteButton(
+                isLoading: detail.isFavLoading,
+                onPressed: shouldIgnore
+                    ? null
+                    : () => detail.changeFavorite(!isFavorite),
+                isFavorite: isFavorite,
+              );
+            },
+          ),
+        ],
       ),
       body: Observer(
         builder: (context) {
           final detail = context.watch<PokemonDetailStore>();
           final List<Widget> list;
           if (detail.isLoading) {
-            list = const [SliverToBoxAdapter(child: PokeballLoader()),
+            list = const [
+              SliverToBoxAdapter(child: PokeballLoader()),
             ];
           } else if (detail.error != null) {
             final error = detail.error!;
@@ -139,26 +162,68 @@ class PokemonDetailsScreen extends HookWidget {
     if (theme != null) {
       child = Theme(
         data: Theme.of(context).brightness == Brightness.light
-          ? theme.light
-          : theme.dark,
+            ? theme.light
+            : theme.dark,
         child: child,
       );
     }
 
-    return ReactionBuilder(
-      key: const ValueKey('ThemeReaction'),
-      builder: (context) {
-        final detailStore = context.read<PokemonDetailStore>();
-        return reaction(
-          (_) {
-            final color = detailStore.data?.color;
-            return color != null && color.isNotEmpty ? color : '';
+    return MultiReactionBuilder(
+      key: const ValueKey('Reaction'),
+      builders: [
+        ReactionBuilder(
+          key: const ValueKey('FavReaction'),
+          builder: (context) {
+            final detailStore = context.read<PokemonDetailStore>();
+            final pokedexStore = context.read<PokedexStore>();
+            return reaction(
+              (_) => detailStore.data?.isFavorite,
+              (isFavorite) {
+                if (isFavorite == null) {
+                  return;
+                }
+                pokedexStore.updateFavorite(
+                  id: detailStore.id,
+                  isFavorite: isFavorite,
+                );
+              },
+              equals: (curr, prev) => curr == prev || curr == null,
+            );
           },
-          (color) {
-            themeState.value = ThemeFlex.fromString(color);
+        ),
+        ReactionBuilder(
+          key: const ValueKey('FavErrorReaction'),
+          builder: (innerContext) {
+            final detailStore = innerContext.read<PokemonDetailStore>();
+            return reaction(
+              (_) => detailStore.favError != null,
+              (error) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Error updating favorite state'),
+                  ),
+                );
+              },
+              equals: (curr, prev) => curr == prev || curr == false,
+            );
           },
-        );
-      },
+        ),
+        ReactionBuilder(
+          key: const ValueKey('ThemeReaction'),
+          builder: (context) {
+            final detailStore = context.read<PokemonDetailStore>();
+            return reaction(
+              (_) {
+                final color = detailStore.data?.color;
+                return color != null && color.isNotEmpty ? color : '';
+              },
+              (color) {
+                themeState.value = ThemeFlex.fromString(color);
+              },
+            );
+          },
+        ),
+      ],
       child: child,
     );
   }

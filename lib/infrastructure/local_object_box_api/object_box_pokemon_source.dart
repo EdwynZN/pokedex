@@ -13,7 +13,6 @@ class PokemonOBSource {
         .query(ob.ObLocalPokemon_.isFavorite.equals(true))
         .order(ob.ObLocalPokemon_.id)
         .build();
-
     return query.find();
   }
 
@@ -32,22 +31,19 @@ class PokemonOBSource {
         condition = ob.ObLocalPokemon_.id.between(min, max);
         break;
     }
-    final query = _box
-        .query(condition)
-        .order(ob.ObLocalPokemon_.id)
-        .build();
+    final query = _box.query(condition).order(ob.ObLocalPokemon_.id).build();
 
     final pokemons = query.find();
     return pokemons..retainWhere((element) => ids.contains(element.id));
   }
 
-  Future<ObLocalPokemon> update({
+  Future<ObLocalPokemon> upsert({
     required ObLocalPokemon pokemon,
     required bool isFavorite,
   }) async {
     final newPokemon = pokemon.copyWith(isFavorite: isFavorite);
     if (pokemon == newPokemon) {
-      return newPokemon;
+      return pokemon;
     }
     _box.put(newPokemon);
     return newPokemon;

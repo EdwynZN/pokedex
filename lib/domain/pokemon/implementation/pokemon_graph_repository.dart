@@ -11,6 +11,7 @@ import 'package:poke_app/infrastructure/graph_api/poke_graph_api.dart';
 import 'package:poke_app/infrastructure/local_object_box_api/model/ob_local_pokemon.dart';
 import 'package:poke_app/infrastructure/local_object_box_api/object_box_pokemon_source.dart';
 import 'package:poke_app/infrastructure/log_service_mixin.dart';
+import 'package:collection/collection.dart';
 
 typedef _PokemonShallowResponses = ({
   List<PokeGraphShallowResponse> api,
@@ -21,8 +22,9 @@ List<PokemonShallow> _filterPokemons(_PokemonShallowResponses responses) {
   final List<PokemonShallow> pokemons = [];
   for (final pokemon in responses.api) {
     final bool isFavorite = responses.local
-        .singleWhere((element) => element.id == pokemon.id)
-        .isFavorite;
+            .firstWhereOrNull((element) => element.id == pokemon.id)
+            ?.isFavorite ??
+        false;
     pokemons.add(PokemonShallow(
       id: pokemon.id,
       name: pokemon.name,
@@ -114,5 +116,26 @@ final class PokemonGraphRepository
       );
       return Left(UnknownFailure(error: e));
     }
+  }
+
+  @override
+  Future<Either<DomainFailure, Pokemon>> changeFavorite({
+    required int id,
+    required bool isFavorite,
+  }) async {
+    final localResponse = await getDetail(id: id);
+    if (localResponse.isLeft()) {
+      return localResponse;
+    }
+    final pokemon = localResponse.fold((l) => throw l, (r) => r);
+    final localPokemon = ObLocalPokemon(
+      id: pokemon.id,
+      image: pokemon.image,
+      isFavorite: pokemon.isFavorite,
+      name: pokemon.name,
+    );
+    await oBSource.upsert(pokemon: localPokemon, isFavorite: isFavorite);
+
+    return Right(pokemon.copyWith(isFavorite: isFavorite));
   }
 }

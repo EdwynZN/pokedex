@@ -13,4 +13,9 @@ abstract interface class PokemonRepository {
   });
 
   Future<Either<DomainFailure, Pokemon>> getDetail({required int id});
+
+  Future<Either<DomainFailure, Pokemon>> changeFavorite({
+    required int id,
+    required bool isFavorite,
+  });
 }

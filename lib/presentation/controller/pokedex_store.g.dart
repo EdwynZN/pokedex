@@ -21,11 +21,11 @@ mixin _$PokedexStore on _PokedexStore, Store {
   bool get hasValue => (_$hasValueComputed ??=
           Computed<bool>(() => super.hasValue, name: '_PokedexStore.hasValue'))
       .value;
-  Computed<List<PokemonShallow>>? _$pokemonsComputed;
+  Computed<List<SinglePokemonStore>>? _$pokemonsComputed;
 
   @override
-  List<PokemonShallow> get pokemons => (_$pokemonsComputed ??=
-          Computed<List<PokemonShallow>>(() => super.pokemons,
+  List<SinglePokemonStore> get pokemons => (_$pokemonsComputed ??=
+          Computed<List<SinglePokemonStore>>(() => super.pokemons,
               name: '_PokedexStore.pokemons'))
       .value;
 
@@ -107,12 +107,94 @@ mixin _$PokedexStore on _PokedexStore, Store {
     return _$_refreshAsyncAction.run(() => super._refresh(clearOnError));
   }
 
+  late final _$_PokedexStoreActionController =
+      ActionController(name: '_PokedexStore', context: context);
+
+  @override
+  void updateFavorite({required int id, required bool isFavorite}) {
+    final _$actionInfo = _$_PokedexStoreActionController.startAction(
+        name: '_PokedexStore.updateFavorite');
+    try {
+      return super.updateFavorite(id: id, isFavorite: isFavorite);
+    } finally {
+      _$_PokedexStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
 hasError: ${hasError},
 hasValue: ${hasValue},
 pokemons: ${pokemons}
+    ''';
+  }
+}
+
+mixin _$SinglePokemonStore on _SinglePokemonStore, Store {
+  Computed<bool>? _$isLoadingComputed;
+
+  @override
+  bool get isLoading =>
+      (_$isLoadingComputed ??= Computed<bool>(() => super.isLoading,
+              name: '_SinglePokemonStore.isLoading'))
+          .value;
+
+  late final _$_pokemonAtom =
+      Atom(name: '_SinglePokemonStore._pokemon', context: context);
+
+  PokemonShallow get pokemon {
+    _$_pokemonAtom.reportRead();
+    return super._pokemon;
+  }
+
+  @override
+  PokemonShallow get _pokemon => pokemon;
+
+  @override
+  set _pokemon(PokemonShallow value) {
+    _$_pokemonAtom.reportWrite(value, super._pokemon, () {
+      super._pokemon = value;
+    });
+  }
+
+  late final _$_futureAtom =
+      Atom(name: '_SinglePokemonStore._future', context: context);
+
+  @override
+  ObservableFuture<Pokemon>? get _future {
+    _$_futureAtom.reportRead();
+    return super._future;
+  }
+
+  @override
+  set _future(ObservableFuture<Pokemon>? value) {
+    _$_futureAtom.reportWrite(value, super._future, () {
+      super._future = value;
+    });
+  }
+
+  late final _$updateFavoriteAsyncAction =
+      AsyncAction('_SinglePokemonStore.updateFavorite', context: context);
+
+  @override
+  Future<void> updateFavorite() {
+    return _$updateFavoriteAsyncAction.run(() => super.updateFavorite());
+  }
+
+  late final _$_updateFavoriteAsyncAction =
+      AsyncAction('_SinglePokemonStore._updateFavorite', context: context);
+
+  @override
+  Future<void> _updateFavorite({required bool isFavorite}) {
+    return _$_updateFavoriteAsyncAction
+        .run(() => super._updateFavorite(isFavorite: isFavorite));
+  }
+
+  @override
+  String toString() {
+    return '''
+isLoading: ${isLoading}
     ''';
   }
 }

@@ -10,8 +10,8 @@ import 'package:mobx/mobx.dart';
 import 'package:poke_app/assets/pokemon_icons.dart';
 import 'package:poke_app/presentation/controller/filter_store.dart';
 import 'package:poke_app/presentation/controller/pokedex_store.dart';
-import 'package:poke_app/domain/pokemon/model/pokemon_shallow.dart';
 import 'package:poke_app/presentation/widget/error_header.dart';
+import 'package:poke_app/presentation/widget/favorite_icon_button.dart';
 import 'package:poke_app/presentation/widget/filter_bar.dart';
 import 'package:poke_app/presentation/widget/search_appbar.dart';
 import 'package:poke_app/utils/constraints.dart';
@@ -160,7 +160,7 @@ class _PokemonListView extends StatelessObserverWidget {
           } */
 
           if (isValid && index < pokemons.length) {
-            return _PokemonTile(pokemon: pokemons[index]);
+            return _PokemonTile(pokemonStore: pokemons[index]);
           } else if (index == pokemons.length) {
             return _LastItem(index: index);
           }
@@ -224,18 +224,19 @@ class _LastItem extends StatelessObserverWidget {
   }
 }
 
-class _PokemonTile extends StatelessWidget {
-  final PokemonShallow pokemon;
+class _PokemonTile extends StatelessObserverWidget {
+  final SinglePokemonStore pokemonStore;
 
   const _PokemonTile({
     // ignore: unused_element
     super.key,
-    required this.pokemon,
+    required this.pokemonStore,
   });
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final pokemon = pokemonStore.pokemon;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: ListTile(
@@ -292,6 +293,11 @@ class _PokemonTile extends StatelessWidget {
             fontSize: 12.0,
             color: scheme.outline,
           ),
+        ),
+        trailing: FavoriteButton(
+          isFavorite: pokemon.isFavorite,
+          isLoading: pokemonStore.isLoading,
+          onPressed: pokemonStore.updateFavorite,
         ),
         onTap: () => context.pushNamed(
           'pokemon_details',

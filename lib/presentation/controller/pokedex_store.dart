@@ -1,4 +1,5 @@
 import 'package:mobx/mobx.dart';
+import 'package:poke_app/domain/pokemon/model/pokemon.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon_filter.dart';
 import 'package:poke_app/domain/pokemon/model/pokemon_shallow.dart';
 import 'package:poke_app/domain/pokemon/repository.dart';
@@ -27,8 +28,8 @@ abstract class _PokedexStore with Store {
   PokemonFilter _filter = const PokemonFilter();
   String _pokemonSearch = '';
 
-  final ObservableList<PokemonShallow> _pokemons =
-      ObservableList<PokemonShallow>();
+  final ObservableList<SinglePokemonStore> _pokemons =
+      ObservableList<SinglePokemonStore>();
 
   @readonly
   bool _isLoading = true;
@@ -46,7 +47,17 @@ abstract class _PokedexStore with Store {
   bool get hasValue => _pokemons.isNotEmpty;
 
   @computed
-  List<PokemonShallow> get pokemons => _pokemons;
+  List<SinglePokemonStore> get pokemons => _pokemons;
+
+  @action
+  void updateFavorite({required int id, required bool isFavorite}) {
+    final index = _pokemons.indexWhere((element) => element.pokemon.id == id);
+    if (index == -1) {
+      return;
+    }
+    final pokemonObs = pokemons[index];
+    pokemonObs._updateFavorite(isFavorite: isFavorite);
+  }
 
   @action
   Future<void> retrieveNextPage() async {
@@ -72,7 +83,10 @@ abstract class _PokedexStore with Store {
   Future<void> _fetch() async {
     try {
       final result = await __fetchPage(pokemons.length);
-      pokemons.addAll(result);
+      pokemons.addAll(result.map((pokemon) => SinglePokemonStore(
+            _repository,
+            pokemon,
+          )));
     } catch (e) {
       _error = e;
     } finally {
@@ -106,7 +120,10 @@ abstract class _PokedexStore with Store {
       final result = await __fetchPage(0);
       pokemons
         ..clear()
-        ..addAll(result);
+        ..addAll(result.map((pokemon) => SinglePokemonStore(
+              _repository,
+              pokemon,
+            )));
       _lastPage = false;
       _disposer();
       _disposer = when(
@@ -127,5 +144,44 @@ abstract class _PokedexStore with Store {
 
   void dispose() {
     _disposer();
+  }
+}
+
+class SinglePokemonStore = _SinglePokemonStore with _$SinglePokemonStore;
+
+abstract class _SinglePokemonStore with Store {
+  final PokemonRepository _repository;
+
+  _SinglePokemonStore(this._repository, this._pokemon);
+
+  @readonly
+  PokemonShallow _pokemon;
+
+  @observable
+  ObservableFuture<Pokemon>? _future;
+
+  @computed
+  bool get isLoading => _future?.status == FutureStatus.pending;
+
+  @action
+  Future<void> updateFavorite() async {
+    if (isLoading) {
+      return;
+    }
+    final future = ObservableFuture(
+      _repository
+          .changeFavorite(id: _pokemon.id, isFavorite: !_pokemon.isFavorite)
+          .then((value) => value.fold((l) => throw l, (r) => r)),
+    );
+    await asyncWhen((p0) => future.status != FutureStatus.pending);
+    if (future.status == FutureStatus.fulfilled) {
+      final pokemon = future.value!;
+      _pokemon = _pokemon.copyWith(isFavorite: pokemon.isFavorite);
+    }
+  }
+
+  @action
+  Future<void> _updateFavorite({required bool isFavorite}) async {
+    _pokemon = _pokemon.copyWith(isFavorite: isFavorite);
   }
 }
