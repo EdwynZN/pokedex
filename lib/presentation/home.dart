@@ -68,6 +68,7 @@ class PokemonHome extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final route = ModalRoute.of(context);
     final textController = useTextEditingController(keys: const []);
     final controller = useScrollController(keys: const []);
     final pokemonStore = context.watch<PokedexStore>();
@@ -83,55 +84,66 @@ class PokemonHome extends HookWidget {
         return position.extentBefore <= (position.viewportDimension / 2);
       },
     );
-    return MultiReactionBuilder(
-      key: const ValueKey('FilterMultiReactionBuilder'),
-      builders: [
-        ReactionBuilder(
-          builder: (context) {
-            final pokemonStore = context.read<PokedexStore>();
-            final filterStore = context.read<FilterStore>();
-            return reaction(
-              (_) => filterStore.onlyFavorites,
-              pokemonStore.changeFavoritesFilter,
-            );
-          },
-        ),
-        ReactionBuilder(
-          builder: (context) {
-            final pokemonStore = context.read<PokedexStore>();
-            final filterStore = context.read<FilterStore>();
-            return reaction(
-              (_) => filterStore.selectedFilter,
-              pokemonStore.changeFilter,
-            );
-          },
-        ),
-      ],
-      child: Scaffold(
-        appBar: SearchAppbar(
-          textController: textController,
-          title: const Text('Pokedex'),
-          centerTitle: true,
-          elevation: 0.0,
-          bottom: const PreferredSize(
-            preferredSize: Size.fromHeight(kToolbarHeight),
-            child: FilterBar(),
+    return PopScope(
+      canPop: route!.isCurrent && !route.willHandlePopInternally,
+      onPopInvoked: (canPop) {
+        if (canPop) {
+          return;
+        }
+        Navigator.of(context).pop();
+      },
+      child: MultiReactionBuilder(
+        key: const ValueKey('FilterMultiReactionBuilder'),
+        builders: [
+          ReactionBuilder(
+            builder: (context) {
+              final pokemonStore = context.read<PokedexStore>();
+              final filterStore = context.read<FilterStore>();
+              return reaction(
+                (_) => filterStore.onlyFavorites,
+                pokemonStore.changeFavoritesFilter,
+              );
+            },
           ),
-        ),
-        body: _PokemonListView(scrollController: controller),
-        floatingActionButton: hideFAB ? null : Observer(
-          builder: (context) {
-            return context.watch<PokedexStore>().pokemons.isEmpty
-                ? const SizedBox()
-                : FloatingActionButton(
-                    onPressed: () => controller.animateTo(
-                      0,
-                      duration: const Duration(milliseconds: 700),
-                      curve: Curves.easeInOutCubicEmphasized,
-                    ),
-                    child: const Icon(Icons.arrow_upward_outlined),
-                  );
-          },
+          ReactionBuilder(
+            builder: (context) {
+              final pokemonStore = context.read<PokedexStore>();
+              final filterStore = context.read<FilterStore>();
+              return reaction(
+                (_) => filterStore.selectedFilter,
+                pokemonStore.changeFilter,
+              );
+            },
+          ),
+        ],
+        child: Scaffold(
+          appBar: SearchAppbar(
+            textController: textController,
+            title: const Text('Pokedex'),
+            centerTitle: true,
+            elevation: 0.0,
+            bottom: const PreferredSize(
+              preferredSize: Size.fromHeight(kToolbarHeight),
+              child: FilterBar(),
+            ),
+          ),
+          body: _PokemonListView(scrollController: controller),
+          floatingActionButton: hideFAB
+              ? null
+              : Observer(
+                  builder: (context) {
+                    return context.watch<PokedexStore>().pokemons.isEmpty
+                        ? const SizedBox()
+                        : FloatingActionButton(
+                            onPressed: () => controller.animateTo(
+                              0,
+                              duration: const Duration(milliseconds: 700),
+                              curve: Curves.easeInOutCubicEmphasized,
+                            ),
+                            child: const Icon(Icons.arrow_upward_outlined),
+                          );
+                  },
+                ),
         ),
       ),
     );
