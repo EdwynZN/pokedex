@@ -57,10 +57,16 @@ abstract class _PokedexStore with Store {
   void updateFavorite({required int id, required bool isFavorite}) {
     final index = _pokemons.indexWhere((element) => element.pokemon.id == id);
     if (index == -1) {
+      /// if the index is not found maybe the cache is invalid and needs to check again
+      _refresh(false, _pokemons.length);
       return;
     }
-    final pokemonObs = pokemons[index];
-    pokemonObs._updateFavorite(isFavorite: isFavorite);
+    if (_onlyFavorites && !isFavorite) {
+      pokemons.removeAt(index);
+    } else {
+      final pokemonObs = pokemons[index];
+      pokemonObs._updateFavorite(isFavorite: isFavorite);
+    }
   }
 
   @action
@@ -73,10 +79,10 @@ abstract class _PokedexStore with Store {
     await _fetch();
   }
 
-  Future<List<PokemonShallow>> __fetchPage(int offset) async {
+  Future<List<PokemonShallow>> __fetchPage(int offset, [int? limit]) async {
     final fetch = await _repository.getPage(
       offset: offset,
-      limit: _pageSize,
+      limit: limit ?? _pageSize,
       filter: _filter,
       query: _pokemonSearch,
       onlyFavorites: _onlyFavorites,
@@ -130,11 +136,11 @@ abstract class _PokedexStore with Store {
   }
 
   @action
-  Future<void> _refresh([bool clearOnError = false]) async {
+  Future<void> _refresh([bool clearOnError = false, int? limit]) async {
     _isLoading = true;
     _error = null;
     try {
-      final result = await __fetchPage(0);
+      final result = await __fetchPage(0, limit);
       pokemons
         ..clear()
         ..addAll(result.map((pokemon) => SinglePokemonStore(

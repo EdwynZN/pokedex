@@ -97,10 +97,7 @@ final class PokemonGraphRepository
       final List<PokeGraphShallowResponse> apiResponse;
       final List<ObLocalPokemon> favResponse;
       if (onlyFavorites) {
-        favResponse = await oBSource.getFavorites(
-          offset: offset,
-          limit: limit,
-        );
+        favResponse = await oBSource.getFavorites(offset: offset);
         if (favResponse.isEmpty) {
           return const Right([]);
         }

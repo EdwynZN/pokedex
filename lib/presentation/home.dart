@@ -235,7 +235,7 @@ class _LastItem extends StatelessObserverWidget {
         ),
       );
     }
-    return const SizedBox();
+    return const SizedBox(height: 72.0);
   }
 }
 

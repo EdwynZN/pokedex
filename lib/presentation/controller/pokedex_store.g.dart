@@ -103,8 +103,8 @@ mixin _$PokedexStore on _PokedexStore, Store {
       AsyncAction('_PokedexStore._refresh', context: context);
 
   @override
-  Future<void> _refresh([bool clearOnError = false]) {
-    return _$_refreshAsyncAction.run(() => super._refresh(clearOnError));
+  Future<void> _refresh([bool clearOnError = false, int? limit]) {
+    return _$_refreshAsyncAction.run(() => super._refresh(clearOnError, limit));
   }
 
   late final _$_PokedexStoreActionController =

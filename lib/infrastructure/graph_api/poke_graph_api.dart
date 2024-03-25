@@ -19,20 +19,24 @@ class PokeGraphApi {
     ({int min, int max})? between,
   }) async {
     final searchExists = search != null && search.isNotEmpty;
+    final betweebIDsExists = between != null;
     final query = pokemonsQueryWithFilters(
       filterTypes: typesID.isNotEmpty,
       filterColors: colorsID.isNotEmpty,
       search: searchExists,
+      between: betweebIDsExists,
     );
     final options = QueryOptions<List<PokeGraphShallowResponse>>(
       document: gql(query),
       variables: {
         'offset': offset,
-        'limit': limit,
+        'limit': betweebIDsExists ? (1 + between.max - between.min) : limit,
         if (generationsID.isNotEmpty) 'generations': generationsID,
         if (typesID.isNotEmpty) 'types': typesID,
         if (colorsID.isNotEmpty) 'colors': colorsID,
         if (searchExists) 'search': search,
+        if (betweebIDsExists) 'min': between.min,
+        if (betweebIDsExists) 'max': between.max,
       },
       fetchPolicy: FetchPolicy.cacheFirst,
       cacheRereadPolicy: CacheRereadPolicy.mergeOptimistic,
