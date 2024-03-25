@@ -18,13 +18,12 @@ String pokemonsQueryWithFilters({
       : '';
   final String whereColors = filterColors
       ? ''',
-        _and: {
-          pokemon_v2_pokemoncolor: {
-            id: {
-              _in: \$colors
-            }
+        pokemon_v2_pokemoncolor: {
+          id: {
+            _in: \$colors
           }
-        }'''
+        }
+        '''
       : '';
   final String whereBetween = between
       ? ''',
@@ -32,7 +31,7 @@ String pokemonsQueryWithFilters({
           id: {
             _gte: \$min,
             _lte: \$max
-          }
+          }$searchType
         }'''
       : '';
 
@@ -55,7 +54,7 @@ String pokemonsQueryWithFilters({
           id: {
             _in: \$generations
           }
-        }$whereType$whereColors$searchType$whereBetween
+        }$whereType$whereColors${between ? whereBetween : searchType}
       },
       order_by: {id: asc}
     ) {
