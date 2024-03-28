@@ -140,7 +140,7 @@ query singlePokemonQuery($id: Int!) {
       pokemons: pokemon_v2_pokemonspecies(
         where: {
           _not: {id: {_eq: $id}},
-          _and: {generation_id: {_in: [1]}}
+          _and: {generation_id: {_in: [1,2]}}
         }
       ) {
         name
